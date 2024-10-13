@@ -16,6 +16,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    # Add a method to count the products in this category
+    def product_count(self):
+        return self.subcategories.aggregate(count=models.Count('product_subcategory'))['count'] or 0
 
 class Subcategory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -31,3 +35,7 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return f"{self.category.name} - {self.name}"
+    
+    # Add a method to count the products in this subcategory
+    def product_count(self):
+        return self.product_subcategory.count()

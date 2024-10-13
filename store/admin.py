@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Product, ProductImage, Brand
+from django.utils.html import mark_safe
 
 # Inline class for Product images
 class ProductImageInline(admin.TabularInline):
@@ -26,10 +27,11 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
+
 # Admin class for Brand
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'website', 'created_at', 'updated_at')
+    list_display = ('name', 'website', 'created_at', 'updated_at', 'product_count_in_brand')
     search_fields = ('name',)
     readonly_fields = ('created_at', 'updated_at')
     list_filter = ('created_at',)
@@ -44,9 +46,12 @@ class BrandAdmin(admin.ModelAdmin):
         }),
     )
 
-# Admin class for ProductImage
-from django.utils.html import mark_safe
+    # Custom method to count the number of products in the brand
+    def product_count_in_brand(self, obj):
+        return obj.product_brand.count()
+    product_count_in_brand.short_description = 'Product Count in Brand'
 
+# Admin class for ProductImage
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'image_thumbnail')
