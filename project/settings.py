@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'settings',
     'accounts',
+    'category',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,33 @@
+from django.db import models
+import uuid
+
+# Create your models here.
+
+class Category(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(null=True,blank=True,upload_to='category-image/')
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+        ordering = ['name']  # Categories will be ordered alphabetically by name.
+
+    def __str__(self):
+        return self.name
+
+class Subcategory(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(null=True,blank=True,upload_to='subcategory-image/')
+
+    class Meta:
+        verbose_name = "Subcategory"
+        verbose_name_plural = "Subcategories"
+        ordering = ['name']  # Subcategories will be ordered alphabetically by name.
+
+    def __str__(self):
+        return f"{self.category.name} - {self.name}"
