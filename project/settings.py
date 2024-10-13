@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-aw%fgn2kmes^rmlcpk$0v$nfk5(dzi_#)$nm=j)sf*1a%v3pu@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'settings',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Database
@@ -108,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Egypt'
 
 USE_I18N = True
 
