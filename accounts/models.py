@@ -77,11 +77,9 @@ class User(AbstractBaseUser):
     
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    address = models.CharField(max_length=50,blank=True , null=True)
     image = models.ImageField(upload_to='users_images/',blank=True , null=True)
     about = models.TextField(max_length=4000 , blank=True , null=True)
     country = models.CharField(max_length=50 ,blank=True, null=True)
-    company = models.CharField(max_length=100 ,blank=True, null=True)
     address_line_1 = models.CharField( max_length=50 , blank=True , null=True)
     address_line_2 = models.CharField( max_length=50 , blank=True , null=True)
     headline = models.CharField(max_length=50 , blank=True, null=True)
