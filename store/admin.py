@@ -5,7 +5,6 @@ from .models import Product, ProductImage, Brand
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1  # Number of empty image forms displayed initially
-    readonly_fields = ('image',)
 
 # Admin class for Product
 @admin.register(Product)
@@ -46,8 +45,18 @@ class BrandAdmin(admin.ModelAdmin):
     )
 
 # Admin class for ProductImage
+from django.utils.html import mark_safe
+
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ('product', 'image')
+    list_display = ('product', 'image_thumbnail')
     search_fields = ('product__name',)
     readonly_fields = ('product',)
+
+    # Custom method to display a thumbnail of the image
+    def image_thumbnail(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" width="100" height="100" />')
+        return "No Image"
+
+    image_thumbnail.short_description = 'Image Preview'  # Title for the column
