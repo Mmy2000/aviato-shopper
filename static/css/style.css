@@ -953,7 +953,10 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 }
 .product-item .product-thumb img {
   object-fit: contain !important;
+  height: 350px !important;
+  width: 350px !important;
 }
+
 .product-item .product-thumb .bage {
   position: absolute;
   top: 12px;
