@@ -10,7 +10,7 @@ class ProductImageInline(admin.TabularInline):
 # Admin class for Product
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'PRDBrand', 'category', 'price', 'stock', 'views', 'is_available', 'created_at')
+    list_display = ('id','name', 'PRDBrand', 'category', 'price', 'stock', 'views', 'is_available', 'created_at')
     search_fields = ('name', 'PRDBrand__name', 'category__name', 'description')
     list_filter = ('is_available', 'category', 'PRDBrand', 'created_at')
     readonly_fields = ('slug', 'created_at', 'modified_date', 'views')

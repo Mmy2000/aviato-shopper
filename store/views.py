@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from .models import Product , Brand
+from .models import Product , Brand , ProductImage
 from category.models import Category , Subcategory
 from django.core.paginator import Paginator
 
@@ -45,3 +45,19 @@ def product_list(request,subcategory_id=None,category_id=None,brand_id=None):
     }
 
     return render(request , 'products/product_list.html' , context)
+
+def product_details(request,product_id):
+
+    try:
+        single_product = Product.objects.get(id=product_id)
+    except Exception as e:
+        raise e
+    
+    product_gallary = ProductImage.objects.filter(product_id=single_product.id)
+    
+    context = {
+        'single_product':single_product,
+        'product_gallary':product_gallary,
+    }
+
+    return render(request , 'products/product_details.html' , context)
