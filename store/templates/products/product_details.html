@@ -17,7 +17,9 @@
 			</div>
 			<div class="col-md-6">
 				<ol class="product-pagination text-right">
-					<li><a class="badge bg-danger py-2 px-4" href="{% url 'product_list' %}">Out of Stock</a></li>
+					{% if single_product.stock <= 0 %}
+					<li class="badge bg-danger py-2 px-4"> Out of Stock</li>
+					{% endif %}
 				</ol>
 			</div>
 		</div>
@@ -111,7 +113,11 @@
 						<span>Category:</span>
 							<a class="badge py-2 px-4" href="{{single_product.category.get_url}}">{{single_product.category}}</a>
 					</div>
-					<a href="cart.html" class="btn btn-main mt-20">Add To Cart</a>
+					{% if single_product.stock <= 0 %}
+					<a href="cart.html" class="btn btn-main mt-20 disabled">Add To Cart</a>
+					{% else %}
+					<a href="cart.html" class="btn btn-main mt-20 ">Add To Cart</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
@@ -240,7 +246,9 @@
 			<div class="col-md-3">
 				<div class="product-item">
 					<div class="product-thumb">
+						{% if product.on_sale %}
 						<span class="bage">Sale</span>
+                        {% endif %}
 						<img class="img-responsive" src="{{product.image.url}}" alt="product-img" />
 						<div class="preview-meta">
 							<ul>

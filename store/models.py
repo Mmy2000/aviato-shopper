@@ -21,6 +21,7 @@ class Product(models.Model):
     slug = models.SlugField(null=True, blank=True, unique=True)
     views = models.PositiveIntegerField(default=0)
     is_available = models.BooleanField(default=True)
+    on_sale = models.BooleanField(default=False)
     PRDBrand = models.ForeignKey('Brand', related_name='product_brand', on_delete=models.CASCADE, blank=True, null=True, verbose_name="Brand")
     like = models.ManyToManyField(User, blank=True, related_name='product_favourite')
     category = models.ForeignKey(Subcategory, related_name='product_subcategory', verbose_name="Subcategory", null=True, blank=True, on_delete=models.CASCADE)

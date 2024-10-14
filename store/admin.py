@@ -10,16 +10,16 @@ class ProductImageInline(admin.TabularInline):
 # Admin class for Product
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'PRDBrand', 'category', 'price', 'stock', 'views', 'is_available', 'created_at')
+    list_display = ('id','name', 'PRDBrand', 'category', 'price', 'stock', 'on_sale','views', 'is_available', 'created_at')
     search_fields = ('name', 'PRDBrand__name', 'category__name', 'description')
-    list_filter = ('is_available', 'category', 'PRDBrand', 'created_at')
+    list_filter = ('is_available','on_sale', 'category', 'PRDBrand', 'created_at')
     readonly_fields = ('slug', 'created_at', 'modified_date', 'views')
-    list_editable = ('price', 'stock', 'is_available')
+    list_editable = ('price', 'stock', 'is_available','on_sale')
     ordering = ['-created_at']
     inlines = [ProductImageInline]
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'description', 'image', 'PRDBrand', 'category', 'price', 'stock', 'is_available')
+            'fields': ('name', 'slug', 'description', 'image', 'PRDBrand', 'category', 'price', 'stock', 'is_available','on_sale')
         }),
         ('Additional Information', {
             'classes': ('collapse',),
