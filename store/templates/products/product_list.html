@@ -151,6 +151,95 @@ Products
                     {% endfor %}
                 </div>
             </div>
+            <div class="pagination-container">
+    <ul class="pagination">
+        <!-- First Page -->
+        {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="First Page">
+                    <i class="fas fa-angle-double-left"></i> First
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-angle-double-left"></i> First</span>
+            </li>
+        {% endif %}
+
+        <!-- Previous Page -->
+        {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous Page">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fas fa-chevron-left"></i> Previous</span>
+            </li>
+        {% endif %}
+
+        <!-- Page Numbers with Ellipsis for Large Pages -->
+        {% if products.paginator.num_pages > 5 %}
+            {% if products.number > 3 %}
+                <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if num > products.number|add:'-3' and num < products.number|add:'3' %}
+                    {% if products.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link" aria-current="page">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if products.number < products.paginator.num_pages|add:'-2' %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item"><a class="page-link" href="?page={{ products.paginator.num_pages }}">{{ products.paginator.num_pages }}</a></li>
+            {% endif %}
+        {% else %}
+            {% for num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Next Page -->
+        {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next Page">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next <i class="fas fa-chevron-right"></i></span>
+            </li>
+        {% endif %}
+
+        <!-- Last Page -->
+        {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.paginator.num_pages }}" aria-label="Last Page">
+                    Last <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Last <i class="fas fa-angle-double-right"></i></span>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+
 
         </div>
     </div>

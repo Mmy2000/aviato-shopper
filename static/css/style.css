@@ -946,13 +946,17 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 }
 
 .product-item {
-  margin-bottom: 30px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
 }
 
 .product-item:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 .product-item .product-thumb {
   position: relative;
@@ -2383,3 +2387,147 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   color: #555;
 }
 /*# sourceMappingURL=style.css.map */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    padding: 10px 10px;
+}
+
+.pagination {
+    display: inline-flex;
+    padding: 10px 20px;
+    list-style: none;
+    border-radius: 50px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #afafaf, #ffffff); /* Black gradient */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.page-item {
+    margin: 1px 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.page-item:hover {
+    transform: scale(1.1);
+}
+
+.page-item a,
+.page-item span {
+    display: block;
+    padding: 12px 20px;
+    color: #e0e0e0; /* Light gray text */
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-item a {
+    cursor: pointer;
+}
+
+.page-item a:hover {
+    background-color: #444; /* Darker gray on hover */
+    color: white;
+    border-color: #444;
+}
+
+.page-item.active span {
+    background: linear-gradient(145deg, #dcdcdc, #ffffff); /* Darker black gradient */
+    color: white;
+    border-color: #0c0d0d;
+}
+
+.page-item.active a {
+    background: linear-gradient(145deg, #000000, #333333); /* Darker black gradient */
+    color: white;
+    border-color: #0c0d0d;
+}
+
+.page-item.disabled span {
+    background-color: #ffffff; /* Dark gray background for disabled */
+    color: #b0b0b0;
+    pointer-events: none;
+    border-color: #ffffff;
+}
+
+.page-item i {
+    font-size: 16px;
+    transition: color 0.3s ease-in-out;
+}
+
+.page-item a:hover i {
+    color: white;
+}
+
+.page-item.disabled span i {
+    color: #b0b0b0;
+}
+
+.page-item span {
+    padding: 12px 20px;
+    display: inline-block;
+    min-width: 32px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+.page-item.active span {
+    border: none;
+}
+
+.page-item i {
+    font-size: 18px;
+    color: inherit;
+}
+
+.page-item a:focus, .page-item a:active {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(24, 24, 25, 0.3);
+}
+
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-wrap: wrap;
+    }
+
+    .page-item {
+        margin: 0 5px;
+    }
+
+    .page-item a, .page-item span {
+        padding: 8px 12px;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.page-item.active {
+    animation: pulse 1.5s infinite;
+}
