@@ -3,11 +3,12 @@ from .models import Product , Brand
 from category.models import Category , Subcategory
 # Create your views here.
 
-def product_list(request,subcategory_id=None,category_id=None):
+def product_list(request,subcategory_id=None,category_id=None,brand_id=None):
 
     subcategories = None
     products = None
     categories = None
+    brands = None
 
     if subcategory_id != None :
         subcategories = get_object_or_404(Subcategory,id = subcategory_id)
@@ -16,6 +17,10 @@ def product_list(request,subcategory_id=None,category_id=None):
     elif category_id != None:
         categories = get_object_or_404(Category , id=category_id)
         products = Product.objects.filter(category__category=categories  ,is_available=True)
+        product_count = products.count()
+    elif brand_id != None:
+        brands = get_object_or_404(Brand , id=brand_id)
+        products = Product.objects.filter(PRDBrand=brands  ,is_available=True)
         product_count = products.count()
     else:
         products = Product.objects.all().filter(is_available=True)

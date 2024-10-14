@@ -31,7 +31,7 @@ class ProductAdmin(admin.ModelAdmin):
 # Admin class for Brand
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'website', 'created_at', 'updated_at', 'product_count_in_brand')
+    list_display = ('id','name', 'website', 'created_at', 'updated_at', 'product_count_in_brand')
     search_fields = ('name',)
     readonly_fields = ('created_at', 'updated_at')
     list_filter = ('created_at',)
