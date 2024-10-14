@@ -2531,3 +2531,5 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .page-item.active {
     animation: pulse 1.5s infinite;
 }
+
+

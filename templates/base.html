@@ -183,13 +183,13 @@
 					<ul class="nav navbar-nav">
 
 						<!-- Home -->
-						<li class="dropdown ">
+						<li class="dropdown {% if request.path == '/' %}active{% endif %} ">
 							<a href="/">Home</a>
 						</li><!-- / Home -->
 
 
 						<!-- Elements -->
-						<li class="dropdown ">
+						<li class="dropdown {% if request.path == '/products/' %}active{% endif %} ">
 							<a href="{% url 'product_list'%}">Shop</a>
 
 						</li><!-- / Elements -->
