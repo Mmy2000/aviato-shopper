@@ -109,7 +109,7 @@ Products
                                 </div>
                             </div>
                             <div class="product-content">
-                                <h4><a href="product-single.html">{{ product.name }}</a></h4>
+                                <h4><a href="{% url 'product_details' product.id %}">{{ product.name }}</a></h4>
                                 <p class="price">${{ product.price }}</p>
                             </div>
                         </div>
@@ -139,7 +139,7 @@ Products
                                                     {{ product.description }}
                                                 </p>
                                                 <a href="cart.html" class="btn btn-main">Add To Cart</a>
-                                                <a href="product-single.html" class="btn btn-transparent">View Product
+                                                <a href="{% url 'product_details' product.id %}" class="btn btn-transparent">View Product
                                                     Details</a>
                                             </div>
                                         </div>
