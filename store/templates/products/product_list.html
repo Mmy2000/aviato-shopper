@@ -25,6 +25,7 @@ Products
 <section class="products section">
     <div class="container">
         <div class="row">
+
             <div class="col-md-3">
                 <div class="widget">
                     <h4 class="widget-title">Short By</h4>
@@ -106,14 +107,18 @@ Products
                 </div>
             </div>
             <div class="col-md-9">
+                <div class="product-count">
+                    <h3 class="product-count-title">Total Products</h3>
+                    <span class="product-count-badge">{{ product_count }}</span>
+                </div>
                 <div class="row">
                     {% for product in products %}
                     <div class="col-md-4">
                         <div class="product-item">
                             <div class="product-thumb">
                                 <span class="bage">Sale</span>
-                                <img class="img-responsive object-fit-contain" width="300px" height="300px" src="{{product.image.url}}"
-                                    alt="product-img" />
+                                <img class="img-responsive object-fit-contain" width="300px" height="300px"
+                                    src="{{product.image.url}}" alt="product-img" />
                                 <div class="preview-meta">
                                     <ul>
                                         <li>
@@ -137,7 +142,7 @@ Products
                         </div>
                     </div>
                     {% endfor %}
-                    
+
 
                     <!-- Modal -->
                     <div class="modal product-modal fade" id="product-modal">

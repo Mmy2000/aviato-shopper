@@ -947,6 +947,12 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 
 .product-item {
   margin-bottom: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 .product-item .product-thumb {
   position: relative;
@@ -1025,7 +1031,36 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .product-item .product-content h4 a {
   color: #000;
 }
+.product-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.product-count {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.product-count-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
+
+.product-count-badge {
+    font-size: 2rem;
+    color: #ffffff;
+    background-color: #0d0f12;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    display: inline-block;
+}
 .product-modal {
   background: rgba(255, 255, 255, 0.9);
   text-align: center;
