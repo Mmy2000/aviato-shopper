@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from accounts.models import User
@@ -51,6 +52,9 @@ class Brand(models.Model):
         ordering = ['name']
         verbose_name = "Brand"
         verbose_name_plural = "Brands"
+
+    def get_url(self):
+        return reverse('products_by_brand',args=[self.id])
 
     def __str__(self):
         return self.name

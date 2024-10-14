@@ -38,7 +38,7 @@ Products
                         </select>
                     </form>
                 </div>
-                <div class="widget product-category">
+                {% comment %} <div class="widget product-category">
                     <h4 class="widget-title">Categories</h4>
                     <div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
@@ -104,7 +104,35 @@ Products
                         </div>
                     </div>
 
+                </div> {% endcomment %}
+                <div class="widget product-category">
+    <h4 class="widget-title">Categories</h4>
+    <div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
+        {% for category in categories_nav %}
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading{{ category.id }}">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                        href="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
+                        {{ category.name }}
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse{{ category.id }}" class="panel-collapse collapse" role="tabpanel"
+                aria-labelledby="heading{{ category.id }}">
+                <div class="panel-body">
+                    <ul>
+                        {% for subcategory in category.subcategories.all %}
+                        <li><a href="{{subcategory.get_url}}">{{ subcategory.name }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
             </div>
             <div class="col-md-9">
                 <div class="product-count">
@@ -122,7 +150,8 @@ Products
                                 <div class="preview-meta">
                                     <ul>
                                         <li>
-                                            <span data-toggle="modal" data-target="#product-modal">
+                                            <!-- Use product ID to open the corresponding modal -->
+                                            <span data-toggle="modal" data-target="#product-modal-{{ product.id }}">
                                                 <i class="tf-ion-ios-search-strong"></i>
                                             </span>
                                         </li>
@@ -136,36 +165,34 @@ Products
                                 </div>
                             </div>
                             <div class="product-content">
-                                <h4><a href="product-single.html">{{product.name}}</a></h4>
-                                <p class="price">${{product.price}}</p>
+                                <h4><a href="product-single.html">{{ product.name }}</a></h4>
+                                <p class="price">${{ product.price }}</p>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
 
-
-                    <!-- Modal -->
-                    <div class="modal product-modal fade" id="product-modal">
+                    <!-- Modal for each product -->
+                    <div class="modal product-modal fade" id="product-modal-{{ product.id }}" tabindex="-1"
+                        role="dialog">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <i class="tf-ion-close"></i>
                         </button>
-                        <div class="modal-dialog " role="document">
+                        <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col-md-8 col-sm-6 col-xs-12">
                                             <div class="modal-image">
-                                                <img class="img-responsive" src="images/shop/products/modal-product.jpg"
+                                                <img class="img-responsive" src="{{ product.image.url }}"
                                                     alt="product-img" />
                                             </div>
                                         </div>
                                         <div class="col-md-4 col-sm-6 col-xs-12">
                                             <div class="product-short-details">
-                                                <h2 class="product-title">GM Pendant, Basalt Grey</h2>
-                                                <p class="product-price">$200</p>
+                                                <h2 class="product-title">{{ product.name }}</h2>
+                                                <p class="product-price">${{ product.price }}</p>
                                                 <p class="product-short-description">
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem iusto
-                                                    nihil cum. Illo laborum numquam rem aut officia dicta cumque.
+                                                    {{ product.description }}
                                                 </p>
                                                 <a href="cart.html" class="btn btn-main">Add To Cart</a>
                                                 <a href="product-single.html" class="btn btn-transparent">View Product
@@ -177,7 +204,7 @@ Products
                             </div>
                         </div>
                     </div><!-- /.modal -->
-
+                    {% endfor %}
                 </div>
             </div>
 

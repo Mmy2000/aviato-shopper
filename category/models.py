@@ -1,6 +1,8 @@
 from django.db import models
 import uuid
 
+from django.urls import reverse
+
 # Create your models here.
 
 class Category(models.Model):
@@ -35,6 +37,9 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return f"{self.category.name} - {self.name}"
+    
+    def get_url(self):
+        return reverse('products_by_subcategory',args=[self.id])
     
     # Add a method to count the products in this subcategory
     def product_count(self):
