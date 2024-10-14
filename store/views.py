@@ -53,11 +53,15 @@ def product_details(request,product_id):
     except Exception as e:
         raise e
     
+    single_product.views+=1
+    single_product.save()
     product_gallary = ProductImage.objects.filter(product_id=single_product.id)
+    related = Product.objects.filter(category=single_product.category)
     
     context = {
         'single_product':single_product,
         'product_gallary':product_gallary,
+        'related':related,
     }
 
     return render(request , 'products/product_details.html' , context)
