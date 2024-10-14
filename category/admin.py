@@ -11,7 +11,7 @@ class SubcategoryInline(admin.TabularInline):
 
 # Admin class for Category
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'subcategory_count', 'product_count_in_category')  # Displays name, description, subcategory count, and product count
+    list_display = ('id','name', 'description', 'subcategory_count', 'product_count_in_category')  # Displays name, description, subcategory count, and product count
     search_fields = ('name',)  # Adds search functionality for category names
     list_filter = ('name',)  # Adds filtering options for categories by name
     inlines = [SubcategoryInline]  # Allows subcategories to be managed inline
@@ -29,7 +29,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 # Admin class for Subcategory
 class SubcategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'description', 'product_count_in_subcategory')  # Displays subcategory name, category, description, and product count
+    list_display = ('id','name', 'category', 'description', 'product_count_in_subcategory')  # Displays subcategory name, category, description, and product count
     search_fields = ('name', 'category__name')  # Allows searching by subcategory and category name
     list_filter = ('category',)  # Adds a filter for categories
     ordering = ['name']  # Orders subcategories by name in the admin list view
