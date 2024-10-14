@@ -1062,35 +1062,42 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
     display: inline-block;
 }
 .product-modal {
-  background: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  padding: 0 !important;
+    background: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    padding: 0;
 }
 .product-modal:before {
-  content: "";
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-  margin-right: -4px;
-}
-.product-modal.fade .modal-dialog {
-  transform: translate(0, 0);
-}
-.product-modal .close {
-  width: 50px;
-  float: none;
-  position: absolute;
-  right: 20px;
-  z-index: 9;
-  top: 20px;
-  font-size: 30px;
-  outline: none;
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
 }
 .product-modal .modal-dialog {
-  width: 900px;
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
+    max-width: 900px;
+    width: 100%;
+    margin: 30px auto;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+.product-modal .close {
+    width: 50px;
+    float: none;
+    position: absolute;
+    right: 20px;
+    z-index: 9;
+    top: 20px;
+    font-size: 30px;
+    outline: none;
+}
+.product-modal .modal-dialog {
+    max-width: 900px;
+    width: 100%;
+    margin: 30px auto;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
 }
 @media (max-width: 480px) {
   .product-modal .modal-dialog {
@@ -1103,16 +1110,17 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   }
 }
 .product-modal .modal-content {
-  border-radius: 0;
-  box-shadow: none;
-  border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
 }
 .product-modal .modal-content .modal-body {
-  padding: 30px;
+    padding: 30px;
 }
 .product-modal .modal-content .modal-body .modal-image img {
-  width: 100%;
-  height: auto;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 .product-modal .modal-content .modal-body .product-short-details h2 {
   margin-top: 0;
