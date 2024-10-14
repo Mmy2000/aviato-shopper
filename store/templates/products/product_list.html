@@ -106,31 +106,41 @@ Products
 
                 </div> {% endcomment %}
                 <div class="widget product-category">
-    <h4 class="widget-title">Categories</h4>
-    <div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
-        {% for category in categories_nav %}
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="heading{{ category.id }}">
-                <h4 class="panel-title">
-                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                        href="#collapse{{ category.id }}" aria-expanded="false" aria-controls="collapse{{ category.id }}">
-                        {{ category.name }}
-                    </a>
-                </h4>
-            </div>
-            <div id="collapse{{ category.id }}" class="panel-collapse collapse" role="tabpanel"
-                aria-labelledby="heading{{ category.id }}">
-                <div class="panel-body">
-                    <ul>
-                        {% for subcategory in category.subcategories.all %}
-                        <li><a href="{{subcategory.get_url}}">{{ subcategory.name }}</a></li>
+                    <h4 class="widget-title">Categories</h4>
+                    <div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
+                        {% for category in categories_nav %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="heading{{ category.id }}">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                                        href="#collapse{{ category.id }}" aria-expanded="false"
+                                        aria-controls="collapse{{ category.id }}">
+                                        {{ category.name }}
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapse{{ category.id }}" class="panel-collapse collapse" role="tabpanel"
+                                aria-labelledby="heading{{ category.id }}">
+                                <div class="panel-body">
+                                    <ul>
+                                        {% for subcategory in category.subcategories.all %}
+                                        <li><a href="{{subcategory.get_url}}">{{ subcategory.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 </div>
-            </div>
-        </div>
+                <div class="widget">
+    <h4 class="widget-title">Brands</h4>
+    <select class="form-control" onchange="window.location.href=this.value;">
+        <option value="">Select a Brand</option>  <!-- Default option -->
+        {% for brand in brands_nav %}
+        <option value="{{ brand.get_url }}">{{ brand }}</option>
         {% endfor %}
-    </div>
+    </select>
 </div>
 
             </div>
