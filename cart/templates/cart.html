@@ -56,8 +56,8 @@ Cart
                                         </td>
                                         <td class="">
                                             <div class="quantity-controls">
-                                                <button class="btn btn-dark decrement-btn"><i
-                                                        class="fas fa-minus"></i></button>
+                                                <a href="{% url 'decrement_cart' cart_item.product.id %}" class="btn btn-dark decrement-btn"><i
+                                                        class="fas fa-minus"></i></a>
                                                 <input type="text" class="form-control text-center quantity-input"
                                                     value="{{cart_item.quantity}}" readonly />
                                                 <a href="{% url 'add_to_cart' cart_item.product.id %}" class="btn btn-dark increment-btn"><i
@@ -72,7 +72,7 @@ Cart
                                             
                                         </td>
                                         <td class="">
-                                            <a class="btn btn-outline-danger" href="#!">Remove</a>
+                                            <a class="btn btn-outline-danger" href="{% url 'delete_cart' cart_item.product.id %}">Remove</a>
                                         </td>
                                     </tr>
                                     {% endfor %}

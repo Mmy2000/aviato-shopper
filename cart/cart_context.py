@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,get_object_or_404
 from store.models import Product
 from .models import Cart , CartItem, Tax
 from django.core.exceptions import ObjectDoesNotExist
@@ -44,3 +44,11 @@ def cart_context(request, total=0, quantity=0, cart_items=None):
     }
 
     return dict(context)
+
+def delete_cart(request , product_id ):
+    
+    product = get_object_or_404(Product , id=product_id)
+    cart = Cart.objects.get(cart_id = _cart_id(request))
+    cart_item = CartItem.objects.get(product=product , cart = cart)
+    cart_item.delete()
+    return redirect('cart')
