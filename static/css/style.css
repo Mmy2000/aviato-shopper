@@ -2034,8 +2034,8 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 
 .shopping .widget-title {
   font-weight: 400;
-  border-bottom: 1px solid #dedede;
-  padding-bottom: 15px;
+  border-bottom: 2px solid #dedede;
+  padding-bottom: 9px;
   margin-bottom: 15px;
   text-transform: uppercase;
   letter-spacing: 1px;

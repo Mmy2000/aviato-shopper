@@ -28,46 +28,74 @@ Cart
     <div class="cart shopping">
         <div class="container">
             <div class="row">
-                <div class="col-md-8 col-md-offset-2">
+                <div class="col-md-9 px-5">
                     <div class="block">
                         <div class="product-list">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th class="">Item Name</th>
-                                            <th class="">Quantity</th>
-                                            <th class="">Item Price</th>
-                                            <th class="">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="">
-                                            <td class="">
-                                                <div class="product-info">
-                                                    <img width="80" src="{% static 'images/shop/cart/cart-1.jpg' %}" alt="" />
-                                                    <a href="#!">Sunglass</a>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="">Item Name</th>
+                                        <th class="">Quantity</th>
+                                        <th class="">Item Price</th>
+                                        <th class="">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cart_item in cart_items %}
+                                    <tr class="">
+                                        <td class="">
+                                            <div class="product-info d-flex align-items-center">
+                                                <img width="80" src="{{cart_item.product.image.url}}" alt="" />
+                                                <div class="d-flex flex-column ">
+                                                    <a
+                                                        href="{% url 'product_details' cart_item.product.id %}">{{cart_item.product.name}}</a>
+                                                    <p class="text-muted small mt-2 ms-4">Color: Red <br> Size: Large
+                                                    </p>
                                                 </div>
-                                            </td>
-                                            <td class="">
-                                                <div class="quantity-controls">
-                                                    <button class="btn btn-dark decrement-btn"
-                                                        ><i class="fas fa-minus"></i></button>
-                                                    <input type="text" class="form-control text-center quantity-input"
-                                                        value="1" readonly />
-                                                    <button class="btn btn-dark increment-btn"
-                                                        ><i class="fas fa-plus"></i></button>
-                                                </div>
-                                            </td>
-                                            <td class="">$200.00</td>
-                                            <td class="">
-                                                <a class="product-remove" href="#!">Remove</a>
-                                            </td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
+                                            </div>
+                                        </td>
+                                        <td class="">
+                                            <div class="quantity-controls">
+                                                <button class="btn btn-dark decrement-btn"><i
+                                                        class="fas fa-minus"></i></button>
+                                                <input type="text" class="form-control text-center quantity-input"
+                                                    value="1" readonly />
+                                                <button class="btn btn-dark increment-btn"><i
+                                                        class="fas fa-plus"></i></button>
+                                            </div>
+                                        </td>
+                                        <td class="">${{cart_item.product.price}}</td>
+                                        <td class="">
+                                            <a class="product-remove" href="#!">Remove</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
 
-                                <a href="checkout.html" class="btn btn-main pull-right">Checkout</a>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="product-checkout-details">
+                        <div class="block">
+                            <h4 class="widget-title">Cart Summary</h4>
+                            <ul class="summary-prices">
+                                <li>
+                                    <span>Subtotal:</span>
+                                    <span class="price">$190</span>
+                                </li>
+                                <li>
+                                    <span>Shipping:</span>
+                                    <span>Free</span>
+                                </li>
+                            </ul>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span>$250</span>
+                            </div>
+                            <a href="checkout.html" class="btn btn-main mt-3 w-100">Checkout</a>
+
                         </div>
                     </div>
                 </div>
