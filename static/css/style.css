@@ -2609,3 +2609,22 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .cart-item-count.bounce {
     animation: bounce 2s infinite;
 }
+
+@keyframes slideInOut {
+    0% {
+        transform: translateX(100px);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100px);
+        opacity: 0.5;
+    }
+}
+
+.badge-anime {
+    animation: slideInOut 3s ease-in-out infinite;
+}

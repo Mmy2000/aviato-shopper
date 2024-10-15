@@ -116,7 +116,14 @@
 					{% if single_product.stock <= 0 %}
 					<a href="" class="btn btn-main mt-20 disabled">Add To Cart</a>
 					{% else %}
+					{% if in_cart %}
+					<div class="">
 					<a href="{% url 'add_to_cart' single_product.id %}" class="btn btn-main mt-20 ">Add To Cart</a>
+					<span class="badge badge-anime py-3 px-3 bg-success mt-4 ms-5">This product already in you cart</span>
+					</div>
+					{% else %}
+					<a href="{% url 'add_to_cart' single_product.id %}" class="btn btn-main mt-20 ">Add To Cart</a>
+					{% endif %}
 					{% endif %}
 				</div>
 			</div>

@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404, render
 from .models import Product , Brand , ProductImage
 from category.models import Category , Subcategory
 from django.core.paginator import Paginator
+from cart.models import CartItem
+from cart.cart_utils import _cart_id
 
 # Create your views here.
 
@@ -50,6 +52,7 @@ def product_details(request,product_id):
 
     try:
         single_product = Product.objects.get(id=product_id)
+        in_cart = CartItem.objects.filter(cart__cart_id = _cart_id(request) , product = product_id).exists()
     except Exception as e:
         raise e
     
@@ -62,6 +65,7 @@ def product_details(request,product_id):
         'single_product':single_product,
         'product_gallary':product_gallary,
         'related':related,
+        'in_cart':in_cart,
     }
 
     return render(request , 'products/product_details.html' , context)
