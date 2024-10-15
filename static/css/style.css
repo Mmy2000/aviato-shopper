@@ -2562,3 +2562,14 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .quantity-controls i {
     font-size: 14px;
 }
+.cart-item-count {
+    position: absolute;
+    bottom: 20px;
+    right: -5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: white;
+    background-color: black;
+    border-radius: 50%;
+    z-index: 10;
+}

@@ -34,13 +34,13 @@
 
 	<!-- Themefisher Icon font -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-	
+
 
 	<link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css'%}">
 	<!-- bootstrap.min css -->
 	<link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap2.min.css'%}">
 	<link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css'%}">
-	
+
 
 	<!-- Animate css -->
 	<link rel="stylesheet" href="{% static 'plugins/animate/animate.css'%}">
@@ -67,8 +67,8 @@
 				</div>
 				<div class="col-md-4 col-xs-12 col-sm-4">
 					<!-- Site Logo -->
-					<div class="logo text-center">
-						<a href="index.html">
+					<div class="logo text-center mb-3 mb-md-0">
+						<a href="/">
 							<!-- replace logo here -->
 							<svg width="135px" height="29px" viewBox="0 0 155 29" version="1.1"
 								xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -88,9 +88,13 @@
 					<!-- Cart -->
 					<ul class="top-menu text-right list-inline">
 						<li class="dropdown cart-nav dropdown-slide">
-							<a href="#!" class="" data-toggle="dropdown" data-hover="dropdown"><i
-									class="tf-ion-android-cart"></i>Cart</a>
+							<a href="{% url 'cart' %}" class="position-relative" data-toggle="dropdown" data-hover="dropdown"><i
+									class="tf-ion-android-cart"></i>Cart<div class="cart-item-count">
+									{{quantity}}
+								</div></a>
+
 							<div class="dropdown-menu cart-dropdown">
+
 								{% for cart_item in cart_items %}
 								<!-- Cart Item -->
 								<div class="media">
@@ -108,7 +112,7 @@
 									<a href="#!" class="remove"><i class="tf-ion-close"></i></a>
 								</div><!-- / Cart Item -->
 								{% endfor %}
-								
+
 
 								<div class="cart-summary">
 									<span>Total</span>
@@ -134,7 +138,7 @@
 							</ul>
 						</li><!-- / Search -->
 
-						
+
 
 					</ul><!-- / .nav .navbar-nav .navbar-right -->
 				</div>
@@ -178,7 +182,7 @@
 						<li class="dropdown full-width dropdown-slide">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
 								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Categories
-								</a>
+							</a>
 							<div class="dropdown-menu">
 								<div class="row">
 									{% for category in categories_nav %}
@@ -195,11 +199,12 @@
 									</div>
 									{% endfor %}
 									<!-- Mega Menu -->
-								<div class="col-sm-3 col-xs-12">
-									<a href="{% url 'product_list'%}">
-										<img class="img-responsive" src="{% static 'images/shop/header-img.jpg'%}" alt="menu image" />
-									</a>
-								</div>
+									<div class="col-sm-3 col-xs-12">
+										<a href="{% url 'product_list'%}">
+											<img class="img-responsive" src="{% static 'images/shop/header-img.jpg'%}"
+												alt="menu image" />
+										</a>
+									</div>
 								</div><!-- / .row -->
 							</div><!-- / .dropdown-menu -->
 						</li><!-- / Pages -->
@@ -208,7 +213,7 @@
 						<li class="dropdown dropdown-slide">
 							<a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
 								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Brands
-									</a>
+							</a>
 							<ul class="dropdown-menu">
 								{% for brand in brands_nav %}
 								<li><a href="{{brand.get_url}}">{{brand}}</a></li>
