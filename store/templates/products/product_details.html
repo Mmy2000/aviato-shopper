@@ -82,22 +82,26 @@
 						<p class="product-description mt-20">
 							{{single_product.description}}
 						</p>
+						{% if single_product.product_variation.colors %}
 						<div class="product-size">
 							<span>color:</span>
 							<select name="color" class="form-control">
-								<option value="red">Red</option>
-								<option value="blue">Blue</option>
-								<option value="black">Black</option>
+								{% for i in single_product.product_variation.colors  %}
+								<option value="{{i.variation_value}}">{{i.variation_value}}</option>
+								{% endfor %}
 							</select>
 						</div>
+						{% endif %}
+						{% if single_product.product_variation.sizes %}
 						<div class="product-size">
 							<span>Size:</span>
 							<select name="size" class="form-control">
-								<option value="small">Small</option>
-								<option value="meduim">medium</option>
-								<option value="large">Large</option>
+								{% for i in single_product.product_variation.sizes  %}
+								<option value="{{i.variation_value}}">{{i.variation_value}}</option>
+								{% endfor %}
 							</select>
 						</div>
+						{% endif %}
 						<div class="product-quantity">
 							<span>Quantity:</span>
 							<div class="product-quantity-slider">

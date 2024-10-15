@@ -1,11 +1,18 @@
 from django.contrib import admin
-from .models import Product, ProductImage, Brand
+from .models import Product, ProductImage, Brand, Variation
 from django.utils.html import mark_safe
 
 # Inline class for Product images
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1  # Number of empty image forms displayed initially
+
+# Inline class for Variations
+class VariationInline(admin.TabularInline):
+    model = Variation
+    extra = 1  # Number of empty variation forms displayed initially
+    list_display = ('variation_category', 'variation_value', 'is_active')
+    list_editable = ('is_active',)
 
 # Admin class for Product
 @admin.register(Product)
@@ -16,7 +23,7 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('slug', 'created_at', 'modified_date', 'views')
     list_editable = ('price', 'stock', 'is_available','on_sale')
     ordering = ['-created_at']
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline, VariationInline]  # Adding VariationInline here
     fieldsets = (
         (None, {
             'fields': ('name', 'slug', 'description', 'image', 'PRDBrand', 'category', 'price', 'stock', 'is_available','on_sale')
@@ -26,7 +33,6 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('views', 'created_at', 'modified_date')
         }),
     )
-
 
 # Admin class for Brand
 @admin.register(Brand)
@@ -65,3 +71,12 @@ class ProductImageAdmin(admin.ModelAdmin):
         return "No Image"
 
     image_thumbnail.short_description = 'Image Preview'  # Title for the column
+
+# Admin class for Variation
+@admin.register(Variation)
+class VariationAdmin(admin.ModelAdmin):
+    list_display = ('product', 'variation_category', 'variation_value', 'is_active')
+    list_editable = ('is_active',)
+    list_filter = ('variation_category', 'is_active')
+    search_fields = ('product__name', 'variation_value')
+    ordering = ['product', 'variation_category', 'variation_value']
