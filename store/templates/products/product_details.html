@@ -73,59 +73,58 @@
 
 			</div>
 			<div class="col-md-7">
-				<div class="single-product-details">
-					<h2>{{single_product}}</h2>
-					<p class="product-price">${{single_product.price}}</p>
+				<form action="{% url 'add_to_cart' single_product.id %}"
+					href="{% url 'add_to_cart' single_product.id %}" method="GET">
+					<div class="single-product-details">
+						<h2>{{single_product}}</h2>
+						<p class="product-price">${{single_product.price}}</p>
 
-					<p class="product-description mt-20">
-						{{single_product.description}}
-					</p>
-					<div class="color-swatches">
-						<span>color:</span>
-						<ul>
-							<li>
-								<a href="#!" class="swatch-violet"></a>
-							</li>
-							<li>
-								<a href="#!" class="swatch-black"></a>
-							</li>
-							<li>
-								<a href="#!" class="swatch-cream"></a>
-							</li>
-						</ul>
-					</div>
-					<div class="product-size">
-						<span>Size:</span>
-						<select class="form-control">
-							<option>S</option>
-							<option>M</option>
-							<option>L</option>
-							<option>XL</option>
-						</select>
-					</div>
-					<div class="product-quantity">
-						<span>Quantity:</span>
-						<div class="product-quantity-slider">
-							<input id="product-quantity" type="text" value="0" name="product-quantity">
+						<p class="product-description mt-20">
+							{{single_product.description}}
+						</p>
+						<div class="product-size">
+							<span>color:</span>
+							<select name="color" class="form-control">
+								<option value="red">Red</option>
+								<option value="blue">Blue</option>
+								<option value="black">Black</option>
+							</select>
 						</div>
+						<div class="product-size">
+							<span>Size:</span>
+							<select name="size" class="form-control">
+								<option value="small">Small</option>
+								<option value="meduim">medium</option>
+								<option value="large">Large</option>
+							</select>
+						</div>
+						<div class="product-quantity">
+							<span>Quantity:</span>
+							<div class="product-quantity-slider">
+								<input id="product-quantity" type="text" value="0" name="product-quantity">
+							</div>
+						</div>
+						<div class="product-category">
+							<span>Category:</span>
+							<a class="badge py-2 px-4"
+								href="{{single_product.category.get_url}}">{{single_product.category}}</a>
+						</div>
+						{% if single_product.stock <= 0 %}
+						<a href="" class="btn btn-main mt-20 disabled">Add To Cart</a>
+						{% else %}
+						{% if in_cart %}
+						<div class="">
+							<button type="submit" class="btn btn-main mt-20 ">Add To
+								Cart</button>
+							<span class="badge badge-anime py-3 px-3 bg-success mt-4 ms-5">This product already in your
+								cart</span>
+						</div>
+						{% else %}
+						<button type="submit" class="btn btn-main mt-20 ">Add To Cart</button>
+						{% endif %}
+						{% endif %}
 					</div>
-					<div class="product-category">
-						<span>Category:</span>
-							<a class="badge py-2 px-4" href="{{single_product.category.get_url}}">{{single_product.category}}</a>
-					</div>
-					{% if single_product.stock <= 0 %}
-					<a href="" class="btn btn-main mt-20 disabled">Add To Cart</a>
-					{% else %}
-					{% if in_cart %}
-					<div class="">
-					<a href="{% url 'add_to_cart' single_product.id %}" class="btn btn-main mt-20 ">Add To Cart</a>
-					<span class="badge badge-anime py-3 px-3 bg-success mt-4 ms-5">This product already in you cart</span>
-					</div>
-					{% else %}
-					<a href="{% url 'add_to_cart' single_product.id %}" class="btn btn-main mt-20 ">Add To Cart</a>
-					{% endif %}
-					{% endif %}
-				</div>
+				</form>
 			</div>
 		</div>
 		<div class="row">
@@ -255,7 +254,7 @@
 					<div class="product-thumb">
 						{% if product.on_sale %}
 						<span class="bage">Sale</span>
-                        {% endif %}
+						{% endif %}
 						<img class="img-responsive" src="{{product.image.url}}" alt="product-img" />
 						<div class="preview-meta">
 							<ul>
@@ -301,7 +300,8 @@
 											{{product.description}}
 										</p>
 										<a href="#!" class="btn btn-main">Add To Cart</a>
-										<a href="{% url 'product_details' product.id %}" class="btn btn-transparent">View Product Details</a>
+										<a href="{% url 'product_details' product.id %}"
+											class="btn btn-transparent">View Product Details</a>
 									</div>
 								</div>
 							</div>
