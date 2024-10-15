@@ -27,6 +27,16 @@ Cart
 <div class="page-wrapper">
     <div class="cart shopping">
         <div class="container">
+            {% if not cart_items %}
+            <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h2 class="mb-4">Your cart is currently empty</h2>
+            <p class="mb-4">It looks like you haven’t added anything to your cart yet. Start shopping to fill it up!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-main mt-3">Continue Shopping</a>
+        </div>
+    </div>
+
+            {% else %}
             <div class="row">
                 <div class="col-md-9 px-5">
                     <div class="block">
@@ -107,6 +117,7 @@ Cart
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
