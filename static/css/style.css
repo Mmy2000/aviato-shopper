@@ -2554,7 +2554,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   color:white;
 }
 .quantity-controls .quantity-input {
-    width: 30px;
+    width: 40px;
     height: 30px;
     text-align: center;
     margin: 0 10px;

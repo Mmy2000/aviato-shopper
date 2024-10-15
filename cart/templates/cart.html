@@ -59,14 +59,20 @@ Cart
                                                 <button class="btn btn-dark decrement-btn"><i
                                                         class="fas fa-minus"></i></button>
                                                 <input type="text" class="form-control text-center quantity-input"
-                                                    value="1" readonly />
-                                                <button class="btn btn-dark increment-btn"><i
-                                                        class="fas fa-plus"></i></button>
+                                                    value="{{cart_item.quantity}}" readonly />
+                                                <a href="{% url 'add_to_cart' cart_item.product.id %}" class="btn btn-dark increment-btn"><i
+                                                        class="fas fa-plus"></i></a>
                                             </div>
                                         </td>
-                                        <td class="">${{cart_item.product.price}}</td>
                                         <td class="">
-                                            <a class="product-remove" href="#!">Remove</a>
+                                            <div class="d-flex flex-column">
+                                                ${{cart_item.sub_total}}
+                                                <span class="text-muted small">${{cart_item.product.price}} each</span>
+                                            </div>
+                                            
+                                        </td>
+                                        <td class="">
+                                            <a class="btn btn-outline-danger" href="#!">Remove</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -83,18 +89,19 @@ Cart
                             <ul class="summary-prices">
                                 <li>
                                     <span>Subtotal:</span>
-                                    <span class="price">$190</span>
+                                    <span class="price">${{total}}</span>
                                 </li>
                                 <li>
                                     <span>Shipping:</span>
-                                    <span>Free</span>
+                                    <span>{{tax}}</span>
                                 </li>
                             </ul>
                             <div class="summary-total">
                                 <span>Total</span>
-                                <span>$250</span>
+                                <span>${{grand_total}}</span>
                             </div>
                             <a href="checkout.html" class="btn btn-main mt-3 w-100">Checkout</a>
+                            <a href="checkout.html" class="btn btn-main mt-3 w-100">Continue Shopping</a>
 
                         </div>
                     </div>

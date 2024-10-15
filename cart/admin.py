@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Tax
 
 class CartItemInline(admin.TabularInline):
     model = CartItem
@@ -26,3 +26,4 @@ class CartItemAdmin(admin.ModelAdmin):
 # Registering the models with custom admin
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartItem, CartItemAdmin)
+admin.site.register(Tax)

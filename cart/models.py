@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from store.models import Product
@@ -6,16 +7,22 @@ from accounts.models import User
 # Create your models here.
 
 class Cart(models.Model):
-    cart_id = models.CharField( max_length=50 , null=True, blank=True)
+    cart_id = models.CharField(max_length=50, null=True, blank=True)
     date_added = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.cart_id
 
 
+class Tax(models.Model):
+    tax = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal('0.00'))
+
+    def __str__(self):
+        return str(self.tax)
+
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE ,blank=True ,  null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
