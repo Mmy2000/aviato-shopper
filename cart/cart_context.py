@@ -1,35 +1,12 @@
+from decimal import Decimal
 from django.shortcuts import redirect, render
 from store.models import Product
 from .models import Cart , CartItem, Tax
 from django.core.exceptions import ObjectDoesNotExist
-from decimal import Decimal
 from .cart_utils import _cart_id
 
-# Create your views here.
 
-
-
-
-def add_to_cart(request , product_id):
-    product = Product.objects.get(id=product_id)
-    try:
-        cart = Cart.objects.get(cart_id=_cart_id(request))
-    except Cart.DoesNotExist:
-        cart = Cart.objects.create(cart_id = _cart_id(request))
-    cart.save()
-
-    try:
-        cart_item = CartItem.objects.get(product = product , cart = cart)
-        cart_item.quantity += 1
-        cart_item.save()
-    except CartItem.DoesNotExist:
-        cart_item = CartItem.objects.create(product = product , cart = cart , quantity = 1)
-        cart_item.save()
-
-    return redirect('cart')
-
-
-def cart(request, total=0, quantity=0, cart_items=None):
+def cart_context(request, total=0, quantity=0, cart_items=None):
     try:
         tax_obj = Tax.objects.last()  # Fetch the last Tax object
         tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')  # Get the tax value or default to 0
@@ -66,4 +43,4 @@ def cart(request, total=0, quantity=0, cart_items=None):
         'tax': tax_amount,
     }
 
-    return render(request, 'cart.html', context)
+    return dict(context)
