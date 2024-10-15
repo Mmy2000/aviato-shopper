@@ -18,9 +18,9 @@ class CartAdmin(admin.ModelAdmin):
     total_items.short_description = 'Total Items'
 
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'user', 'cart', 'quantity', 'is_active', 'sub_total')  # Fields to display in list view
-    search_fields = ('product__name', 'user__username')  # Add search capability
-    list_filter = ('is_active', 'user', 'cart')  # Filters
+    list_display = ('product', 'cart', 'quantity', 'is_active', 'sub_total')  # Fields to display in list view
+    search_fields = ('product__name',)  # Add search capability
+    list_filter = ('is_active', 'cart')  # Filters
     readonly_fields = ('sub_total',)  # Makes sub_total read-only
 
 # Registering the models with custom admin
