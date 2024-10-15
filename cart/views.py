@@ -12,11 +12,12 @@ from .cart_utils import _cart_id
 
 
 def add_to_cart(request , product_id):
-    color = request.GET['color']
-    size = request.GET['size']
-
-    return HttpResponse(color + ' ' + size)
-    exit()
+    if request.method == "POST":
+        color = request.POST['color']
+        size = request.POST['size']
+        quantity = request.POST['product-quantity']
+        print(color + ' ' + size + ' ' + quantity)
+    
     product = Product.objects.get(id=product_id)
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request))
