@@ -48,7 +48,10 @@ def add_to_cart(request , product_id):
             index=ex_var_list.index(product_variation)
             item_id=id[index]
             item = CartItem.objects.get(product=product , id=item_id)
-            item.quantity+=int(request.POST["product-quantity"])
+            if "product-quantity" in request.POST and request.POST["product-quantity"].isdigit():
+                item.quantity += int(request.POST["product-quantity"])
+            else:
+                item.quantity += 1
             item.save()
             
         else:
@@ -67,12 +70,12 @@ def add_to_cart(request , product_id):
     return redirect('cart')
 
 
-def decrement_cart(request , product_id):
+def decrement_cart(request , product_id ,cart_item_id):
     
     product = get_object_or_404(Product , id=product_id)
     try:  
         cart = Cart.objects.get(cart_id = _cart_id(request))
-        cart_item = CartItem.objects.get(product=product , cart = cart )
+        cart_item = CartItem.objects.get(product=product , cart = cart ,id=cart_item_id )
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
             cart_item.save()

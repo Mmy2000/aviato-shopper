@@ -45,10 +45,10 @@ def cart_context(request, total=0, quantity=0, cart_items=None):
 
     return dict(context)
 
-def delete_cart(request , product_id ):
+def delete_cart(request , product_id ,cart_item_id ):
     
     product = get_object_or_404(Product , id=product_id)
     cart = Cart.objects.get(cart_id = _cart_id(request))
-    cart_item = CartItem.objects.get(product=product , cart = cart)
+    cart_item = CartItem.objects.get(product=product , cart = cart , id=cart_item_id)
     cart_item.delete()
     return redirect('cart')

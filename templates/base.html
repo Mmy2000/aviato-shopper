@@ -109,7 +109,7 @@
 										</div>
 										<h5><strong>${{cart_item.sub_total}}</strong></h5>
 									</div>
-									<a href="{% url 'delete_cart' cart_item.product.id %}" class="remove"><i class="tf-ion-close"></i></a>
+									<a href="{% url 'delete_cart' cart_item.product.id cart_item.id %}" class="remove"><i class="tf-ion-close"></i></a>
 								</div><!-- / Cart Item -->
 								{% endfor %}
 

@@ -29,12 +29,13 @@ Cart
         <div class="container">
             {% if not cart_items %}
             <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <h2 class="mb-4">Your cart is currently empty</h2>
-            <p class="mb-4">It looks like you haven’t added anything to your cart yet. Start shopping to fill it up!</p>
-            <a href="{% url 'product_list' %}" class="btn btn-main mt-3">Continue Shopping</a>
-        </div>
-    </div>
+                <div class="col-md-6 text-center">
+                    <h2 class="mb-4">Your cart is currently empty</h2>
+                    <p class="mb-4">It looks like you haven’t added anything to your cart yet. Start shopping to fill it
+                        up!</p>
+                    <a href="{% url 'product_list' %}" class="btn btn-main mt-3">Continue Shopping</a>
+                </div>
+            </div>
 
             {% else %}
             <div class="row">
@@ -71,12 +72,22 @@ Cart
                                         </td>
                                         <td class="">
                                             <div class="quantity-controls">
-                                                <a href="{% url 'decrement_cart' cart_item.product.id %}" class="btn btn-dark decrement-btn"><i
-                                                        class="fas fa-minus"></i></a>
+                                                <a href="{% url 'decrement_cart' cart_item.product.id cart_item.id %}"
+                                                    class="btn btn-dark decrement-btn"><i class="fas fa-minus"></i></a>
                                                 <input type="text" class="form-control text-center quantity-input"
                                                     value="{{cart_item.quantity}}" readonly />
-                                                <a href="{% url 'add_to_cart' cart_item.product.id %}" class="btn btn-dark increment-btn"><i
-                                                        class="fas fa-plus"></i></a>
+                                                <form action="{% url 'add_to_cart' cart_item.product.id%}"
+                                                    method="POST">
+                                                    {% csrf_token %}
+                                                    {% for item in cart_item.variations.all %}
+                                                    <input type="hidden"
+                                                        class="form-control form-control-sm bg-secondary text-center"
+                                                        name="{{ item.variation_category | lower }}"
+                                                        value="{{ item.variation_value | capfirst }}">
+                                                    {% endfor %}
+                                                    <button class="btn btn-dark increment-btn"><i
+                                                            class="fas fa-plus"></i></button>
+                                                </form>
                                             </div>
                                         </td>
                                         <td class="">
@@ -84,10 +95,11 @@ Cart
                                                 ${{cart_item.sub_total}}
                                                 <span class="text-muted small">${{cart_item.product.price}} each</span>
                                             </div>
-                                            
+
                                         </td>
                                         <td class="">
-                                            <a class="btn btn-outline-danger" href="{% url 'delete_cart' cart_item.product.id %}">Remove</a>
+                                            <a class="btn btn-outline-danger"
+                                                href="{% url 'delete_cart' cart_item.product.id cart_item.id %}">Remove</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -116,7 +128,8 @@ Cart
                                 <span>${{grand_total}}</span>
                             </div>
                             <a href="checkout.html" class="btn btn-main mt-3 w-100">Checkout</a>
-                            <a href="{% url 'product_list' %}" class="btn btn-solid-border mt-3 w-100">Continue Shopping</a>
+                            <a href="{% url 'product_list' %}" class="btn btn-solid-border mt-3 w-100">Continue
+                                Shopping</a>
 
                         </div>
                     </div>
