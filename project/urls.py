@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('settings.urls') ),
     path('products/' , include('store.urls')),
+    path('accounts/' , include('accounts.urls')),
     path('cart/' , include('cart.urls')),
 ]
 urlpatterns +=  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
