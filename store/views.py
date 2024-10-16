@@ -79,11 +79,14 @@ def search(request):
                 Q(description__icontains=q ) |
                 Q( name__icontains=q)
                 )
+            paginator = Paginator(product, 9)  # Show 9 products per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             product_count = product.count()
         else :
             return render(request , 'products/product_list.html')
     context = {
-        'products':product , 
+        'products':page_obj , 
         'product_count':product_count
     }
     return render(request , 'products/product_list.html', context)
