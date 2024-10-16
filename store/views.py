@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render,redirect
 from .models import Product , Brand , ProductImage
 from category.models import Category , Subcategory
 from django.core.paginator import Paginator
 from cart.models import CartItem
 from cart.cart_utils import _cart_id
+from django.db.models.query_utils import Q
 
 # Create your views here.
 
@@ -69,3 +70,20 @@ def product_details(request,product_id):
     }
 
     return render(request , 'products/product_details.html' , context)
+
+def search(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        if q :
+            product = Product.objects.order_by('-created_at').filter(
+                Q(description__icontains=q ) |
+                Q( name__icontains=q)
+                )
+            product_count = product.count()
+        else :
+            return render(request , 'products/product_list.html')
+    context = {
+        'products':product , 
+        'product_count':product_count
+    }
+    return render(request , 'products/product_list.html', context)

@@ -156,7 +156,7 @@
 
 						<!-- Search -->
 						<li class="dropdown search dropdown-slide">
-							<a href="#!" class="" data-toggle="dropdown" data-hover="dropdown"><i
+							<a href="{% url 'search' %}" name="q" class="" data-toggle="dropdown" data-hover="dropdown"><i
 									class="tf-ion-ios-search-strong"></i> Search</a>
 							<ul class="dropdown-menu search-dropdown">
 								<li>
@@ -252,7 +252,7 @@
 						<!-- Shop -->
 						<li class="dropdown dropdown-slide">
 							<a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
-								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Accounts</a>
+								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
 							<ul class="dropdown-menu">
 								<li><a href="{% url 'login' %}">Login</a></li>
 								<li><a href="{% url 'register' %}">Register</a></li>
