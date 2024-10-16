@@ -140,21 +140,17 @@
 						<li class="dropdown search dropdown-slide">
 							<a href="{% url 'search' %}" name="q" class="" data-toggle="dropdown"
 								data-hover="dropdown"><i class="fa-solid fa-user "></i>
-								{% if user.is_authenticated %}
-								<span class="ms-1">{{user.user_name}}Account</span>
-									{% else %}
-									<span
-									class="ms-1">Account</span>
-									{% endif %}
+								<span class="ms-1">Account</span>
 								</a>
 							<ul class="dropdown-menu shadow-lg">
 								{% if user.is_authenticated %}
-								<li><a href="/">Profile</a></li>
-								<li><a href="{% url 'logout' %}">Logout</a></li>
+								<li><a href="{% url 'dashboard'%}"><i class="fa-solid fa-chart-line me-2"></i>Dashboard</a></li>
+								<li><a href="{% url 'profile'%}"><i class="fa-solid fa-address-card me-2"></i>Profile</a></li>
+								<li><a href="{% url 'logout' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
 
 								{% else %}
-								<li><a href="{% url 'login' %}">Login</a></li>
-								<li><a href="{% url 'register' %}">Register</a></li>
+								<li><a href="{% url 'login' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Login</a></li>
+								<li><a href="{% url 'register' %}"><i class="fa-solid fa-user-plus me-2"></i>Register</a></li>
 								{% endif %}
 
 							</ul>
