@@ -604,7 +604,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 
 .top-header .container {
   padding-top: 35px;
-  padding-bottom: 35px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #dedede;
 }
 .top-header .dropdown-menu {
@@ -778,6 +778,13 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   left: auto;
   border: none;
 }
+
+.search .dropdown-menu {
+  right: auto;
+  left: auto;
+  border: none;
+  
+}
 .navigation .dropdown-slide .dropdown-menu li a {
   color: #222;
   font-size: 12px;
@@ -788,7 +795,21 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   text-transform: uppercase;
   transition: 0.3s all;
 }
+.search .dropdown-menu li a {
+  color: #222;
+  font-size: 12px;
+  border: 1px solid transparent;
+  display: block;
+  padding: 8px 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: 0.3s all;
+}
 .navigation .dropdown-slide .dropdown-menu li a:hover {
+  background-color: #000;
+  color: #fff;
+}
+.search .dropdown-menu li a:hover {
   background-color: #000;
   color: #fff;
 }
