@@ -1541,11 +1541,12 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 }
 
 .dashboard-user-profile .user-img {
-  width: 180px;
+  width: 100%;
+  border-radius: 50%;
 }
 .dashboard-user-profile .user-profile-list {
-  margin-top: 30px;
-  padding-left: 30px;
+  margin-top: 20px;
+  padding-left: 20px;
 }
 .dashboard-user-profile .user-profile-list li {
   margin-bottom: 8px;

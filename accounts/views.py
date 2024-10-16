@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect , get_object_or_404
-from .forms import RegistrationForm 
-from .models import User
+from .forms import RegistrationForm , UserForm , ProfileForm
+from .models import User , Profile
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 # Verification email
@@ -148,3 +148,33 @@ def resetPassword(request):
             return redirect('resetPassword')
     else:
         return render(request, 'accounts/resetPassword.html')
+    
+@login_required(login_url = 'login')
+def profile(request):
+    profile=Profile.objects.get(user=request.user)
+    if request.method == "POST":
+        user_form = UserForm(request.POST , instance=request.user)
+        profile_form = ProfileForm(request.POST,request.FILES,instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            myprofile = profile_form.save(commit=False)
+            myprofile.user = request.user
+            myprofile.save()
+            messages.success(request, 'Profile updated successfully')
+            return redirect('profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=profile)
+
+
+    return render(request,'profile/profile.html',{'profile':profile,
+                                                   'user_form':user_form,
+        'profile_form':profile_form})
+
+@login_required(login_url='login')
+def dashboard(request):
+    profile=Profile.objects.get(user=request.user)
+    return render(request,'profile/dashboard.html',{
+        'profile':profile,
+    })

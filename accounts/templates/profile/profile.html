@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Profile
+{% endblock title %}
+{% block body %}
+
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="content">
+                    <h1 class="page-name">Profile</h1>
+                    <ol class="breadcrumb">
+                        <li><a href="/">Home</a></li>
+                        <li class="active">my account</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="user-dashboard page-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-inline dashboard-menu text-center">
+                    <li><a class="" href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="order.html">Orders</a></li>
+                    <li><a class="active" href="{% url 'profile' %}">Profile Details</a></li>
+                    <li><a href="address.html">Change Password</a></li>
+                </ul>
+                <div class="row">
+                    <div class="col-md-4">
+
+                        <div class="dashboard-wrapper dashboard-user-profile">
+                            <div class="media">
+                                <div class="pull-left text-center w-100 d-flex flex-column justify-content-center align-content-center">
+                                    <img class="media-object px-5  user-img"
+                                        src="{% if profile.image %} {{profile.image.url}} {% else %} {% endif %}" alt="Image">
+                                    <h5 class="">{{profile.headline}}</h5>
+                                </div>
+                                <div class="media-body">
+                                    <ul class="user-profile-list">
+                                        <li><span>Full Name:</span>{{profile.full_name}}</li>
+                                        <li><span>Country:</span>{{profile.country}}</li>
+                                        <li><span>Email:</span>{{profile.user.email}}</li>
+                                        <li><span>Phone:</span>{{profile.user.phone_number}}</li>
+                                        <li><span>Address:</span>{{profile.full_address}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+
+                        <div class="dashboard-wrapper dashboard-user-profile">
+                            <div class="media">
+                                <h3 class="text-center">Edit Profile</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}
