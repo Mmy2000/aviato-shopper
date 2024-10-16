@@ -59,12 +59,7 @@
 	<section class="top-header">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-4 col-xs-12 col-sm-4">
-					<div class="contact-number">
-						<i class="tf-ion-ios-telephone"></i>
-						<span>0129- 12323-123123</span>
-					</div>
-				</div>
+
 				<div class="col-md-4 col-xs-12 col-sm-4">
 					<!-- Site Logo -->
 					<div class="logo text-center mb-3 mb-md-0">
@@ -84,12 +79,38 @@
 						</a>
 					</div>
 				</div>
+				<div class="col-md-4 col-xs-12 text-center  col-sm-4">
+					<ul class="social-media">
+						<li>
+							<a href="https://www.facebook.com/themefisher">
+								<i class="tf-ion-social-facebook"></i>
+							</a>
+						</li>
+						<li>
+							<a href="https://www.instagram.com/themefisher">
+								<i class="tf-ion-social-instagram"></i>
+							</a>
+						</li>
+						<li>
+							<a href="https://www.twitter.com/themefisher">
+								<i class="tf-ion-social-twitter"></i>
+							</a>
+						</li>
+						<li>
+							<a href="https://www.pinterest.com/themefisher/">
+								<i class="tf-ion-social-pinterest"></i>
+							</a>
+						</li>
+					</ul>
+					
+				</div>
 				<div class="col-md-4 col-xs-12 col-sm-4">
 					<!-- Cart -->
 					<ul class="top-menu text-right list-inline">
 						<li class="dropdown cart-nav dropdown-slide">
-							<a href="{% url 'cart' %}" class="position-relative" data-toggle="dropdown" data-hover="dropdown"><i
-									class="tf-ion-android-cart"></i>Cart<div class="cart-item-count">
+							<a href="{% url 'cart' %}" class="position-relative" data-toggle="dropdown"
+								data-hover="dropdown"><i class="tf-ion-android-cart"></i>Cart<div
+									class="cart-item-count">
 									{{quantity}}
 								</div></a>
 
@@ -111,7 +132,8 @@
 										</div>
 										<h5><strong>${{cart_item.sub_total}}</strong></h5>
 									</div>
-									<a href="{% url 'delete_cart' cart_item.product.id cart_item.id %}" class="remove"><i class="tf-ion-close"></i></a>
+									<a href="{% url 'delete_cart' cart_item.product.id cart_item.id %}"
+										class="remove"><i class="tf-ion-close"></i></a>
 								</div><!-- / Cart Item -->
 								{% endfor %}
 
@@ -230,12 +252,10 @@
 						<!-- Shop -->
 						<li class="dropdown dropdown-slide">
 							<a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
-								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Elements <span
-									class="tf-ion-ios-arrow-down"></span></a>
+								data-delay="350" role="button" aria-haspopup="true" aria-expanded="false">Accounts</a>
 							<ul class="dropdown-menu">
-								<li><a href="typography.html">Typography</a></li>
-								<li><a href="buttons.html">Buttons</a></li>
-								<li><a href="alerts.html">Alerts</a></li>
+								<li><a href="{% url 'login' %}">Login</a></li>
+								<li><a href="{% url 'register' %}">Register</a></li>
 							</ul>
 						</li><!-- / Blog -->
 					</ul><!-- / .nav .navbar-nav -->
