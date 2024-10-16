@@ -95,3 +95,19 @@
 
 
 })(jQuery);
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Select all remove links
+    var removeLinks = document.querySelectorAll('.remove');
+
+    removeLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+            var productId = this.getAttribute('data-product-id');
+            var itemId = this.getAttribute('data-item-id');
+            var deleteUrl = "{% url 'delete_cart' 'product_id' 'item_id' %}".replace('product_id', productId).replace('item_id', itemId);
+
+            // Set the delete URL in the modal's confirmation button
+            document.getElementById('confirmDeleteButton').setAttribute('href', deleteUrl);
+        });
+    });
+});
