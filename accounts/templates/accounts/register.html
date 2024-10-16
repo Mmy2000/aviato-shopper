@@ -10,8 +10,8 @@ Register
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div class="block text-center">
-          <a class="logo" href="index.html">
-            <img src="images/logo.png" alt="">
+          <a class="logo" href="/">
+            <img src="{% static 'images/logo.png' %}" alt="">
           </a>
           <h2 class="text-center">Create Your Account</h2>
           <form class="text-left clearfix" action="index.html">
@@ -34,7 +34,7 @@ Register
               <button type="submit" class="btn btn-main text-center">Sign In</button>
             </div>
           </form>
-          <p class="mt-20">Already hava an account ?<a href="login.html"> Login</a></p>
+          <p class="mt-20">Already hava an account ?<a href="{% url 'login' %}"> Login</a></p>
           <p><a href="forget-password.html"> Forgot your password?</a></p>
         </div>
       </div>
