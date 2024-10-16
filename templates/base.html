@@ -95,6 +95,8 @@
 
 							<div class="dropdown-menu cart-dropdown">
 
+								{% if cart_items %}
+
 								{% for cart_item in cart_items %}
 								<!-- Cart Item -->
 								<div class="media">
@@ -122,6 +124,10 @@
 									<li><a href="{% url 'cart' %}" class="btn btn-small">View Cart</a></li>
 									<li><a href="checkout.html" class="btn btn-small btn-solid-border">Checkout</a></li>
 								</ul>
+								{% else %}
+								<h4> Your Cart is Empty!</h4>
+								<a href="{% url 'product_list' %}" class="btn btn-small">Go to Shopping</a>
+								{% endif %}
 							</div>
 
 						</li><!-- / Cart -->
