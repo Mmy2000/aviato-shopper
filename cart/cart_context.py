@@ -4,6 +4,7 @@ from store.models import Product
 from .models import Cart , CartItem, Tax
 from django.core.exceptions import ObjectDoesNotExist
 from .cart_utils import _cart_id
+from django.contrib import messages
 
 
 def cart_context(request, total=0, quantity=0, cart_items=None):
@@ -52,7 +53,11 @@ def cart_context(request, total=0, quantity=0, cart_items=None):
 def delete_cart(request , product_id ,cart_item_id ):
     
     product = get_object_or_404(Product , id=product_id)
-    cart = Cart.objects.get(cart_id = _cart_id(request))
-    cart_item = CartItem.objects.get(product=product , cart = cart , id=cart_item_id)
+    if request.user.is_authenticated:
+        cart_item = CartItem.objects.get(product=product , user = request.user,id=cart_item_id)
+    else:
+        cart = Cart.objects.get(cart_id = _cart_id(request))
+        cart_item = CartItem.objects.get(product=product , cart = cart , id=cart_item_id)
     cart_item.delete()
+    messages.success(request,f'{product.name} deleted Successfully')
     return redirect('cart')

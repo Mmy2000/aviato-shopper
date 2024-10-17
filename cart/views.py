@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 from .cart_utils import _cart_id
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 # Create your views here.
 
 
@@ -53,6 +55,7 @@ def add_to_cart(request , product_id):
                 else:
                     item.quantity += 1
                 item.save()
+                messages.success(request,f"{product.name} updated successfully")
                 
             else:
                 item = CartItem.objects.create(product = product , user=current_user , quantity = request.POST['product-quantity'])
@@ -60,14 +63,16 @@ def add_to_cart(request , product_id):
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
+                messages.success(request,"Product added successfully")
         else :
             cart_item = CartItem.objects.create(product = product , user=current_user , quantity = request.POST.get('product-quantity', 1))
             if len(product_variation) > 0:
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+            messages.success(request,"Product added successfully")
 
-        return redirect('cart')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     # if user is't_authenticated
     else:
         product_variation = []
@@ -109,6 +114,7 @@ def add_to_cart(request , product_id):
                 else:
                     item.quantity += 1
                 item.save()
+                messages.success(request,f"{product.name} updated successfully")
                 
             else:
                 item = CartItem.objects.create(product = product , cart = cart , quantity = request.POST['product-quantity'])
@@ -116,27 +122,34 @@ def add_to_cart(request , product_id):
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
+                messages.success(request,"Product added successfully")
         else :
             cart_item = CartItem.objects.create(product = product , cart = cart , quantity = request.POST.get('product-quantity', 1))
             if len(product_variation) > 0:
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+            messages.success(request,"Product added successfully")
 
-        return redirect('cart')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def decrement_cart(request , product_id ,cart_item_id):
     
     product = get_object_or_404(Product , id=product_id)
-    try:  
-        cart = Cart.objects.get(cart_id = _cart_id(request))
-        cart_item = CartItem.objects.get(product=product , cart = cart ,id=cart_item_id )
+    try:
+        if request.user.is_authenticated:
+            cart_item = CartItem.objects.get(product=product , user = request.user , id=cart_item_id)
+        else:
+            cart = Cart.objects.get(cart_id = _cart_id(request))
+            cart_item = CartItem.objects.get(product=product , cart = cart ,id=cart_item_id )
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
             cart_item.save()
+            messages.success(request,f'{product.name} updated Successfully')
         else:
             cart_item.delete()
+            messages.success(request,f"{product.name} deleted successfully")
             
     except:
         pass
