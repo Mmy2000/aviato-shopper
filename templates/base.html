@@ -103,11 +103,11 @@
 								{% for cart_item in cart_items %}
 								<!-- Cart Item -->
 								<div class="media">
-									<a class="pull-left" href="#!">
+									<a class="pull-left" href="{% url 'product_details' cart_item.product.id %}">
 										<img class="media-object" src="{{cart_item.product.image.url}}" alt="image" />
 									</a>
 									<div class="media-body">
-										<h4 class="media-heading"><a href="#!">{{cart_item.product.name}}</a></h4>
+										<h4 class="media-heading"><a href="{% url 'product_details' cart_item.product.id %}">{{cart_item.product.name}}</a></h4>
 										<div class="cart-price">
 											<span>{{cart_item.quantity}} x</span>
 											<span>${{cart_item.product.price}}</span>
