@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from accounts.models import User
 from category.models import Subcategory 
 from decimal import Decimal
+from taggit.managers import TaggableManager
 
 # Create your models here.
 

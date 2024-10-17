@@ -32,6 +32,7 @@ Products
         <div class="row">
 
             <div class="col-md-3">
+                <!-- Sidebar with categories, brands, etc. -->
                 <div class="widget">
                     <h4 class="widget-title">Short By</h4>
                     <form method="post" action="#">
@@ -82,7 +83,10 @@ Products
                 </div>
 
             </div>
+
             <div class="col-md-9">
+                <!-- Check if there are products -->
+                {% if products %}
                 <div class="product-count">
                     <h3 class="product-count-title">Total Products</h3>
                     <span class="product-count-badge">{{ product_count }}</span>
@@ -100,7 +104,6 @@ Products
                                 <div class="preview-meta">
                                     <ul>
                                         <li>
-                                            <!-- Use product ID to open the corresponding modal -->
                                             <span data-toggle="modal" data-target="#product-modal-{{ product.id }}">
                                                 <i class="tf-ion-ios-search-strong"></i>
                                             </span>
@@ -160,100 +163,17 @@ Products
                     </div><!-- /.modal -->
                     {% endfor %}
                 </div>
+                {% else %}
+                <!-- Show professional message when no products are available -->
+                <div class="no-products-message">
+        <h3 class="text-center">No Products Found</h3>
+        <p class="text-center">
+            It looks like there are no products available in this category at the moment. We frequently update our catalog, so be sure to check back soon. 
+            In the meantime, feel free to explore other sections of our store or <a href="/">reach out to our team</a> if you have any questions or need assistance finding the perfect item.
+        </p>
+    </div>
+                {% endif %}
             </div>
-            <div class="pagination-container">
-                <ul class="pagination">
-                    <!-- First Page -->
-                    {% if products.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="First Page">
-                            <i class="fas fa-angle-double-left"></i> First
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-angle-double-left"></i> First</span>
-                    </li>
-                    {% endif %}
-
-                    <!-- Previous Page -->
-                    {% if products.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.previous_page_number }}"
-                            aria-label="Previous Page">
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fas fa-chevron-left"></i> Previous</span>
-                    </li>
-                    {% endif %}
-
-                    <!-- Page Numbers -->
-                    {% if products.paginator.num_pages > 5 %}
-                    {% if products.number > 3 %}
-                    <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
-                    <li class="page-item disabled"><span class="page-link">...</span></li>
-                    {% endif %}
-
-                    {% for num in products.paginator.page_range %}
-                    {% if num > products.number|add:'-3' and num < products.number|add:'3' %}
-                    {% if products.number == num %}
-                    <li class="page-item active">
-                        <span class="page-link" aria-current="page">{{ num }}</span>
-                    </li>
-                    {% else %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                    </li>
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-
-                    {% if products.number < products.paginator.num_pages|add:'-2' %}
-                    <li class="page-item disabled"><span class="page-link">...</span></li>
-                    <li class="page-item"><a class="page-link"
-                            href="?page={{ products.paginator.num_pages }}">{{ products.paginator.num_pages }}</a></li>
-                    {% endif %}
-                    {% else %}
-                    {% for num in products.paginator.page_range %}
-                    <li class="page-item {% if products.number == num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                    </li>
-                    {% endfor %}
-                    {% endif %}
-
-                    <!-- Next Page -->
-                    {% if products.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next Page">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">Next <i class="fas fa-chevron-right"></i></span>
-                    </li>
-                    {% endif %}
-
-                    <!-- Last Page -->
-                    {% if products.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.paginator.num_pages }}" aria-label="Last Page">
-                            Last <i class="fas fa-angle-double-right"></i>
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">Last <i class="fas fa-angle-double-right"></i></span>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-
-
-
         </div>
     </div>
 </section>
