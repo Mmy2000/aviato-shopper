@@ -43,16 +43,20 @@ Profile
                                     <img class="user-img"
                                         src="{% if profile.image %} {{profile.image.url}} {% else %} {% endif %}"
                                         alt="Image">
-                                    <h5 class="">{{profile.headline}}</h5>
+                                    <h5 class=""><strong>{{profile.headline}}</strong></h5>
                                 </div>
                                 <div class="media-body">
-                                    <ul class="user-profile-list">
+                                    <ul class="user-profile-list border py-3 mb-4 shadow">
                                         <li><span>Full Name:</span>{{profile.full_name}}</li>
                                         <li><span>Country:</span>{{profile.country}}</li>
                                         <li><span>Email:</span>{{profile.user.email}}</li>
                                         <li><span>Phone:</span>{{profile.user.phone_number}}</li>
                                         <li><span>Address:</span>{{profile.full_address}}</li>
                                     </ul>
+                                    <div class=" px-4 border">
+                                        <h6 class="mt-3"><strong>About You</strong></h6>
+                                        <p>{{profile.about}}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

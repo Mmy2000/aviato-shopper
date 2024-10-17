@@ -177,6 +177,7 @@ def profile(request):
 
 @login_required(login_url = 'login')
 def change_password(request):
+    profile=Profile.objects.get(user=request.user)
     if request.method == "POST":
         current_password = request.POST['current_password']
         new_password = request.POST['new_password']
@@ -200,7 +201,7 @@ def change_password(request):
             print('Password does not match')
             return redirect('change_password')
 
-    return render(request , 'accounts/change_password.html')
+    return render(request , 'accounts/change_password.html' , {'profile':profile})
 
 
 @login_required(login_url='login')
