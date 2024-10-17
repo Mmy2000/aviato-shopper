@@ -175,6 +175,33 @@ def profile(request):
         'profile_form': profile_form
     })
 
+@login_required(login_url = 'login')
+def change_password(request):
+    if request.method == "POST":
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        user = User.objects.get(username__exact=request.user.username)
+        if new_password == confirm_password :
+            success = user.check_password(current_password)
+            if success :
+                user.set_password(new_password)
+                user.save()
+                messages.success(request,'Password Updated Successfully.')
+                print('success')
+                return redirect('change_password')
+            else:
+                print('Please enter a valid current password')
+                messages.error(request,'Please enter a valid current password.')
+                return redirect('change_password')
+        else:
+            messages.error(request,'Password does not match.')
+            print('Password does not match')
+            return redirect('change_password')
+
+    return render(request , 'accounts/change_password.html')
+
 
 @login_required(login_url='login')
 def dashboard(request):
@@ -182,3 +209,4 @@ def dashboard(request):
     return render(request,'profile/dashboard.html',{
         'profile':profile,
     })
+
