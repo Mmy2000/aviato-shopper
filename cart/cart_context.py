@@ -5,7 +5,7 @@ from .models import Cart , CartItem, Tax
 from django.core.exceptions import ObjectDoesNotExist
 from .cart_utils import _cart_id
 from django.contrib import messages
-
+from django.http import HttpResponseRedirect
 
 def cart_context(request, total=0, quantity=0, cart_items=None):
     try:
@@ -60,4 +60,4 @@ def delete_cart(request , product_id ,cart_item_id ):
         cart_item = CartItem.objects.get(product=product , cart = cart , id=cart_item_id)
     cart_item.delete()
     messages.success(request,f'{product.name} deleted Successfully')
-    return redirect('cart')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

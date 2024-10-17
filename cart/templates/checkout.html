@@ -24,6 +24,7 @@ Cart
 <div class="page-wrapper">
     <div class="checkout shopping">
         <div class="container">
+            {% include "includes/alerts.html" %}
             <div class="row">
                 <form class="col-md-8 checkout-form" method="POST">
                     {% csrf_token %}
