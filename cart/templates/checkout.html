@@ -25,7 +25,8 @@ Cart
     <div class="checkout shopping">
         <div class="container">
             <div class="row">
-                <form class="col-md-8 checkout-form">
+                <form class="col-md-8 checkout-form" method="POST">
+                    {% csrf_token %}
                     <div class="block billing-details">
                         <h4 class="widget-title">Billing Details</h4>
                         <div class="form-group">
@@ -84,6 +85,7 @@ Cart
                         <p class="secure-payment-info">
                             <strong>Secure Payment:</strong> All transactions are encrypted and protected.
                         </p>
+                        <button type="submit"  class="btn btn-main mt-20 w-100">Place Order</ >
                     </div>
                 </form>
                 <div class="col-md-4">

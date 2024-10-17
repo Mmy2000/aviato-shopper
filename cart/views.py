@@ -5,10 +5,8 @@ from .models import Cart , CartItem, Tax
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 from .cart_utils import _cart_id
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
-
-
 
 
 def add_to_cart(request , product_id):
@@ -127,6 +125,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
     return render(request, 'cart.html', context)
 
+@login_required(login_url='login')
 def checkout(request, total=0, quantity=0, cart_items=None):
     try:
         tax_obj = Tax.objects.last()  # Fetch the last Tax object

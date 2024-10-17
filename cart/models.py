@@ -21,6 +21,7 @@ class Tax(models.Model):
         return str(self.tax)
 
 class CartItem(models.Model):
+    user = models.ForeignKey(User,null=True,verbose_name="user cart", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True)
     variations = models.ManyToManyField(Variation,blank=True)
