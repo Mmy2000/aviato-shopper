@@ -90,8 +90,11 @@ def cart(request, total=0, quantity=0, cart_items=None):
     try:
         tax_obj = Tax.objects.last()  # Fetch the last Tax object
         tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')  # Get the tax value or default to 0
-        cart = Cart.objects.get(cart_id=_cart_id(request))  # Get the cart using a session ID or similar method
-        cart_items = CartItem.objects.filter(cart=cart, is_active=True)  # Get active items in the cart
+        if request.user.is_authenticated:
+            cart_items = CartItem.objects.filter(user=request.user , is_active = True)
+        else:
+            cart = Cart.objects.get(cart_id=_cart_id(request))  # Get the cart using a session ID or similar method
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True)  # Get active items in the cart
         
         for cart_item in cart_items:
             total += cart_item.product.price * cart_item.quantity  # Sum up the product prices
@@ -130,8 +133,11 @@ def checkout(request, total=0, quantity=0, cart_items=None):
     try:
         tax_obj = Tax.objects.last()  # Fetch the last Tax object
         tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')  # Get the tax value or default to 0
-        cart = Cart.objects.get(cart_id=_cart_id(request))  # Get the cart using a session ID or similar method
-        cart_items = CartItem.objects.filter(cart=cart, is_active=True)  # Get active items in the cart
+        if request.user.is_authenticated:
+            cart_items = CartItem.objects.filter(user=request.user , is_active = True)
+        else:
+            cart = Cart.objects.get(cart_id=_cart_id(request))  # Get the cart using a session ID or similar method
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True)  # Get active items in the cart
         
         for cart_item in cart_items:
             total += cart_item.product.price * cart_item.quantity  # Sum up the product prices
