@@ -126,3 +126,10 @@ def cart(request, total=0, quantity=0, cart_items=None):
     }
 
     return render(request, 'cart.html', context)
+
+def checkout(request):
+
+    context = {
+        
+    }
+    return render(request , 'checkout.html' , context)
