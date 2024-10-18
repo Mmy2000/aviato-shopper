@@ -2703,3 +2703,33 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
         margin-bottom: 10px;
         color: #343a40;
     }
+
+  /* success.css */
+.success-msg .block {
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.success-msg .success-icon {
+    font-size: 4rem;
+    color: #27ae60;
+}
+
+.order-summary {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+}
+
+
+.lead {
+    font-size: 1.2rem;
+    color: #777;
+}

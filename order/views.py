@@ -138,5 +138,14 @@ def cash_order(request):
     messages.success(request, "Thank you! Your order has been successfully placed.")
     return redirect('order_success')
 
+
 def order_success(request):
-    return render(request , 'order_complete.html')
+    current_user = request.user
+
+    # Get the last order placed by the user
+    order = Order.objects.filter(user=current_user, is_orderd=True).last()
+
+    context = {
+        'order': order,
+    }
+    return render(request , 'order_complete.html' , context)

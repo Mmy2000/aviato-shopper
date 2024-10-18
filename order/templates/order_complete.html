@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-Cart
+Order Complete
 {% endblock title %}
 {% block body %}
 
@@ -9,17 +9,43 @@ Cart
 <section class="page-wrapper success-msg">
   <div class="container">
     {% include "includes/alerts.html" %}
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
         <div class="block text-center">
-        	<i class="tf-ion-android-checkmark-circle"></i>
-          <h2 class="text-center">Thank you! For your Order</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, sed.</p>
-          <a href="{% url 'product_list' %}" class="btn btn-main mt-20">Continue Shopping</a>
+          <!-- Success Icon -->
+          <i class="tf-ion-android-checkmark-circle success-icon mb-4"></i>
+          <h2 class="text-center">Thank You for Your Order!</h2>
+          <p class="lead">Your order has been successfully placed and is now being processed. You'll receive a confirmation email shortly with more details.</p>
+          
+          <!-- Order Summary Section -->
+          <div class="order-summary p-4 mt-4 text-left border rounded">
+            <h3 class="mb-4">Order Summary</h3>
+            <div class="summary-item mb-2">
+              <strong>Order Number:</strong> <span>{{ order.order_number }}</span>
+            </div>
+            <div class="summary-item mb-2">
+              <strong>Total Amount:</strong> <span>${{ order.order_total }}</span>
+            </div>
+            <div class="summary-item mb-2">
+              <strong>Tax:</strong> <span>${{ order.tax }}</span>
+            </div>
+            <div class="summary-item mb-2">
+              <strong>Payment Method:</strong> <span>{{ order.payment_method|title }}</span>
+            </div>
+            <div class="summary-item mb-2">
+              <strong>Shipping Address:</strong> <span>{{ order.full_address }}, {{ order.city }}, {{ order.state }}, {{ order.country }}</span>
+            </div>
+          </div>
+
+          <!-- Continue Shopping Button -->
+          <a href="{% url 'product_list' %}" class="btn btn-main mt-4 btn-lg">Continue Shopping</a>
+
+          <!-- Support Contact Info -->
+          <p class="mt-4">If you have any questions about your order, please <a href="/">contact our support team</a>.</p>
         </div>
       </div>
     </div>
   </div>
-</section><!-- /.page-warpper -->
+</section>
 
 {% endblock %}
