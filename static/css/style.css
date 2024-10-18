@@ -2733,3 +2733,40 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
     font-size: 1.2rem;
     color: #777;
 }
+
+.ordered-products .product-item {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ordered-products .product-item:last-child {
+    border-bottom: none;
+}
+
+.ordered-products .product-detail {
+    font-size: 1.1rem;
+}
+
+.ordered-products .product-detail strong {
+    font-size: 1.2rem;
+}
+.ordered-products .product-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.main-sections {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* This ensures responsiveness */
+}
+
+.main-sections > div {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.main-sections > div:last-child {
+    margin-right: 0;
+}

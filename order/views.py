@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 import datetime
 import json
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 # Create your views here.
 
 def place_order(request,total=0, quantity=0):
@@ -134,6 +136,20 @@ def cash_order(request):
     # Clear the user's cart after the order is placed
     cart_items.delete()
 
+    # Send order received email to customer
+    try:
+        mail_subject = 'Thank you for your order!'
+        message = render_to_string('order_recieved_email.html', {
+            'user': request.user,
+            'order': order,
+        })
+        to_email = request.user.email
+        send_email = EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+    except Exception as e:
+        # Log the exception (optional)
+        print(f"Failed to send email: {e}")
+
     # Provide a success message and redirect to a success page
     messages.success(request, "Thank you! Your order has been successfully placed.")
     return redirect('order_success')
@@ -144,8 +160,14 @@ def order_success(request):
 
     # Get the last order placed by the user
     order = Order.objects.filter(user=current_user, is_orderd=True).last()
+    ordered_products = OrderProduct.objects.filter(order_id=order.id)
+    subtotal = 0
+    for i in ordered_products:
+        subtotal += i.product_price * i.quantity
 
     context = {
         'order': order,
+        'subtotal': subtotal,
+        'ordered_products': ordered_products,
     }
     return render(request , 'order_complete.html' , context)
