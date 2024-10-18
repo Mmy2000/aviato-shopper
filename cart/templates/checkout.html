@@ -26,7 +26,7 @@ Cart
         <div class="container">
             {% include "includes/alerts.html" %}
             <div class="row">
-                <form class="col-md-8 checkout-form" method="POST">
+                <form class="col-md-8 checkout-form" action="{% url 'place_order' %}" method="POST">
                     {% csrf_token %}
                     <div class="block billing-details">
                         <h4 class="widget-title">Billing Details</h4>
@@ -58,7 +58,7 @@ Cart
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone_number">Phone Number</label>
-                                    <input type="text" name="phone_number" class="form-control" id="phone_number"
+                                    <input type="text" name="phone" class="form-control" id="phone_number"
                                         placeholder="Enter Your Last Name">
                                 </div>
                             </div>

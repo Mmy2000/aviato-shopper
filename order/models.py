@@ -39,6 +39,7 @@ class Order(models.Model):
     address_line_2 = models.CharField(_("address_line_2"), max_length=50 , blank=True)
     country = models.CharField(_("country"), max_length=50 )
     state = models.CharField(_("state"), max_length=50 )
+    payment_method = models.CharField(_("payment_method"), max_length=50 )
     city = models.CharField(_("city"), max_length=50 )
     order_note = models.CharField(_("order_note"), max_length=1000 , blank=True)
     order_total = models.FloatField(_("order_total"),)

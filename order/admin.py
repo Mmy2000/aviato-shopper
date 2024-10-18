@@ -12,15 +12,15 @@ class PaymentAdmin(admin.ModelAdmin):
         verbose_name_plural = 'Payments'
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'full_name', 'email', 'order_total', 'status', 'created_at', 'is_orderd')
+    list_display = ('id','order_number', 'full_name', 'email', 'order_total', 'status', 'created_at','payment_method', 'is_orderd')
     list_filter = ('status', 'created_at', 'is_orderd')
-    search_fields = ('order_number', 'first_name', 'last_name', 'email')
+    search_fields = ('order_number', 'first_name', 'last_name', 'email','payment_method')
     fieldsets = (
         (None, {
             'fields': ('order_number', 'first_name', 'last_name', 'email', 'phone', 'address_line_1', 'address_line_2')
         }),
         ('Shipping Information', {
-            'fields': ('zip_code', 'country', 'state', 'city', 'order_note', 'ip'),
+            'fields': ('zip_code', 'country', 'state', 'city', 'order_note', 'ip','payment_method'),
             'classes': ('collapse',),
         }),
         ('Order Summary', {
