@@ -13,6 +13,11 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 # Create your views here.
 
+
+def paypal_payment(request):
+    return render(request , 'payment.html')
+
+
 def place_order(request,total=0, quantity=0):
     current_user = request.user
     cart_items = CartItem.objects.filter(user=current_user)

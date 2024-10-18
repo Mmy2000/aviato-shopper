@@ -2770,3 +2770,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .main-sections > div:last-child {
     margin-right: 0;
 }
+.product-items{
+  background-color: white;
+  padding: 5px 10px;
+}

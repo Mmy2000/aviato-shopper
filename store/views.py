@@ -53,7 +53,10 @@ def product_details(request,product_id):
 
     try:
         single_product = Product.objects.get(id=product_id)
-        in_cart = CartItem.objects.filter(cart__cart_id = _cart_id(request) , product = product_id).exists()
+        if request.user.is_authenticated:
+            in_cart = CartItem.objects.filter(user=request.user , product = product_id).exists()
+        else:
+            in_cart = CartItem.objects.filter(cart__cart_id = _cart_id(request) , product = product_id).exists()
     except Exception as e:
         raise e
     
