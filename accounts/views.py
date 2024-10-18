@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect , get_object_or_404
 
 from cart.cart_utils import _cart_id
 from cart.models import Cart, CartItem
+from order.models import Order
 from .forms import RegistrationForm , UserForm , ProfileForm
 from .models import User , Profile
 from django.contrib import messages, auth
@@ -254,7 +255,19 @@ def change_password(request):
 @login_required(login_url='login')
 def dashboard(request):
     profile=Profile.objects.get(user=request.user)
+    orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id,is_orderd=True)
+    orders_count = orders.count()
     return render(request,'profile/dashboard.html',{
         'profile':profile,
+        'orders':orders,
+        'orders_count':orders_count,
     })
 
+
+@login_required(login_url='login')
+def orders(request):
+    orders = Order.objects.filter(user=request.user,is_orderd=True).order_by('-created_at')
+    context = {
+        'orders':orders,
+    }
+    return render(request , 'profile/orders.html' , context)

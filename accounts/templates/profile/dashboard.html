@@ -29,7 +29,7 @@ Dashboard
 			<div class="col-md-12">
 				<ul class="list-inline dashboard-menu text-center">
 					<li><a class="active" href="{% url 'dashboard' %}">Dashboard</a></li>
-					<li><a href="order.html">Orders</a></li>
+					<li><a href="{% url 'orders'%}">Orders</a></li>
 					<li><a href="{% url 'profile' %}">Profile Details</a></li>
                     <li><a href="{% url 'change_password' %}">Change Password</a></li>
 				</ul>
@@ -52,30 +52,22 @@ Dashboard
 									<tr>
 										<th>Order ID</th>
 										<th>Date</th>
-										<th>Items</th>
+										<th>Status</th>
+										<th>Payment Method</th>
 										<th>Total Price</th>
 										<th></th>
 									</tr>
 								</thead>
 								<tbody>
+									{% for order in orders %}
 									<tr>
-										<td><a href="#!">#252125</a></td>
-										<td>Mar 25, 2016</td>
-										<td>2</td>
-										<td>$ 99.00</td>
+										<td><a href="#!">#{{order.order_number}}</a></td>
+										<td>{{order.created_at}}</td>
+										<td>{{order.status}}</td>
+										<td>{{order.payment_method}}</td>
+										<td>$ {{order.order_total}}</td>
 									</tr>
-									<tr>
-										<td><a href="#!">#252125</a></td>
-										<td>Mar 25, 2016</td>
-										<td>2</td>
-										<td>$ 99.00</td>
-									</tr>
-									<tr>
-										<td><a href="#!">#252125</a></td>
-										<td>Mar 25, 2016</td>
-										<td>2</td>
-										<td>$ 99.00</td>
-									</tr>
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
