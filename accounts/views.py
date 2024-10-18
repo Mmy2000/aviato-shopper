@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect , get_object_or_404
 
 from cart.cart_utils import _cart_id
 from cart.models import Cart, CartItem
-from order.models import Order
+from order.models import Order, OrderProduct
 from .forms import RegistrationForm , UserForm , ProfileForm
 from .models import User , Profile
 from django.contrib import messages, auth
@@ -271,3 +271,18 @@ def orders(request):
         'orders':orders,
     }
     return render(request , 'profile/orders.html' , context)
+
+def order_detail(request,order_id):
+    profile=Profile.objects.get(user=request.user)
+    order = Order.objects.get(order_number=order_id)
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
+    context = {
+        'profile':profile,
+        'order':order,
+        'order_detail':order_detail,
+        'subtotal':subtotal,
+    }
+    return render(request,'profile/order_detail.html',context)

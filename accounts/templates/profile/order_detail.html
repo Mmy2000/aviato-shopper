@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Order Complete
+{% endblock title %}
+{% block body %}
+
+<!-- Page Wrapper -->
+<section class="page-wrapper success-msg py-5">
+    <div class="container">
+        {% include "includes/alerts.html" %}
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="block text-center">
+                    <a class="logo" href="/">
+            <img src="{% static 'images/logo.png' %}" alt="">
+          </a>
+                    <h2 class="text-center font-weight-bold">Your Order</h2>
+
+                    <div class="main-sections d-flex justify-content-between">
+                        <!-- Order Summary Section -->
+                        <div class="order-summary bg-light p-4 text-left border rounded mr-3" style="flex: 1;">
+                            <h3 class="mb-4 text-uppercase font-weight-bold">Order Summary</h3>
+                            <div class="summary-item mb-2">
+                                <strong>Order Number:</strong> <span class="text-muted">{{ order.order_number }}</span>
+                            </div>
+                            <div class="summary-item mb-2">
+                                <strong>Total Amount:</strong> <span class="text-muted">${{ order.order_total }}</span>
+                            </div>
+                            <div class="summary-item mb-2">
+                                <strong>Tax:</strong> <span class="text-muted">${{ order.tax }}</span>
+                            </div>
+                            <div class="summary-item mb-2">
+                                <strong>Payment Method:</strong> <span class="text-muted">{{ order.payment_method|title }}</span>
+                            </div>
+                            <div class="summary-item mb-2">
+                                <strong>Shipping Address:</strong> <span class="text-muted">{{ order.full_address }}, {{ order.city }}, {{ order.state }}, {{ order.country }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Ordered Products Section -->
+                        <div class="ordered-products bg-light p-4 text-left border rounded" style="flex: 1;">
+                            <h3 class="mb-4 text-uppercase font-weight-bold">Products in Your Order</h3>
+
+                            {% for item in order.orderproduct_set.all %}
+                            <div class="product-item mb-3 d-flex align-items-center border-bottom pb-3">
+                                <!-- Product Image -->
+                                <div class="product-image mr-3">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid"
+                                        style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
+                                </div>
+                                <!-- Product Details -->
+                                <div class="product-detail d-flex justify-content-between flex-grow-1">
+                                    <div>
+                                        <strong>{{ item.product.name }}</strong>
+                                        <p class="text-muted">Price: ${{ item.product_price }} x {{ item.quantity }}</p>
+                                        {% if item.variations.all %}
+                                        <p class="text-muted small mb-0">
+                                            {% for variation in item.variations.all %}
+                                            <span>{{ variation.variation_category|capfirst }}: {{ variation.variation_value|capfirst }}</span><br>
+                                            {% endfor %}
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-right">
+                                        <strong>Total: ${{ item.product_price|floatformat:2 }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Continue Shopping Button -->
+                    <a href="{% url 'product_list' %}" class="btn btn-main mt-4 w-100 btn-lg text-uppercase">Continue Shopping</a>
+
+                    <!-- Support Contact Info -->
+                    <p class="mt-4 text-muted">If you have any questions about your order, please <a href="/" class="font-weight-bold">contact our support team</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -12,4 +12,5 @@ urlpatterns = [
     path('profile/' , views.profile , name="profile" ),
     path('dashboard/' , views.dashboard , name="dashboard" ),
     path('orders/' , views.orders , name="orders" ),
+    path('order_detail/<int:order_id>/' , views.order_detail , name="order_detail" ),
 ]

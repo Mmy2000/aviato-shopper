@@ -61,9 +61,17 @@ Dashboard
 								<tbody>
 									{% for order in orders %}
 									<tr>
-										<td><a href="#!">#{{order.order_number}}</a></td>
+										<td><a href="{% url 'order_detail' order.order_number %}">#{{order.order_number}}</a></td>
 										<td>{{order.created_at}}</td>
-										<td>{{order.status}}</td>
+										{% if order.status == "On Delivery" %}
+									<td><span class="label label-primary">{{order.status}}</span></td>
+                                    {% elif order.status == "Completed" %}
+                                    <td><span class="label label-success">{{order.status}}</span></td>
+                                    {% elif order.status == "Cancelled" %}
+                                    <td><span class="label label-danger">{{order.status}}</span></td>
+                                    {% elif order.status == "New" %}
+                                    <td><span class="label label-info">{{order.status}}</span></td>
+                                    {% endif %}
 										<td>{{order.payment_method}}</td>
 										<td>$ {{order.order_total}}</td>
 									</tr>
