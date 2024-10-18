@@ -83,6 +83,9 @@ def place_order(request,total=0, quantity=0):
         else:
             messages.error(request, 'Pls, Add your Delivery info!')
             return redirect('checkout')
+    else:
+        messages.error(request, 'Something Wrong!')
+        return redirect('checkout')
         
 
 
