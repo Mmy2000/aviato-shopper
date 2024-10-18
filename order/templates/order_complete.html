@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Cart
+{% endblock title %}
+{% block body %}
+
+<!-- Page Wrapper -->
+<section class="page-wrapper success-msg">
+  <div class="container">
+    {% include "includes/alerts.html" %}
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="block text-center">
+        	<i class="tf-ion-android-checkmark-circle"></i>
+          <h2 class="text-center">Thank you! For your Order</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, sed.</p>
+          <a href="{% url 'product_list' %}" class="btn btn-main mt-20">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- /.page-warpper -->
+
+{% endblock %}

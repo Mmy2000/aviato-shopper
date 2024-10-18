@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.shortcuts import render , redirect
 
-from order.models import Order
+from order.models import Order, OrderProduct, Payment
 from .forms import OrderForm
 from cart.models import CartItem, Tax
 from django.http import JsonResponse
@@ -70,7 +70,73 @@ def place_order(request,total=0, quantity=0):
                 'tax': tax_amount,
                 'grand_total': grand_total,
             }
+            if data.payment_method == "cash":
+                return redirect('cash_order')
             return render(request, 'payment.html', context)
         else:
             messages.error(request, 'Pls, Add your Delivery info!')
             return redirect('checkout')
+        
+
+
+
+def cash_order(request):
+    current_user = request.user
+
+    # Get the order that was just created
+    order = Order.objects.filter(user=current_user, is_orderd=False).last()
+
+    if not order:
+        messages.error(request, "No order found.")
+        return redirect('product_list')
+
+    # Create a payment object for cash payment
+    payment = Payment(
+        user=current_user,
+        payment_id=f"cash_{order.order_number}",  # Generate a payment id for cash payment
+        payment_method="cash",
+        payment_paid="False",  # Cash payment is considered as paid
+        status="On Delivery",  # Set status to Paid
+    )
+    payment.save()
+
+    # Update the order with the payment information
+    order.payment = payment
+    order.is_orderd = True
+    order.status = "On Delivery"
+    order.save()
+
+    # Move all cart items to OrderProduct table and reduce stock
+    cart_items = CartItem.objects.filter(user=current_user)
+
+    for item in cart_items:
+        # Create OrderProduct instance for each item in the cart
+        order_product = OrderProduct(
+            order=order,
+            payment=payment,
+            user=current_user,
+            product=item.product,
+            quantity=item.quantity,
+            product_price=item.product.price,
+            ordered=True
+        )
+        order_product.save()
+
+        # If there are variations, associate them with the order product
+        order_product.variations.set(item.variations.all())
+        order_product.save()
+
+        # Reduce the stock of the product
+        product = item.product
+        product.stock -= item.quantity
+        product.save()
+
+    # Clear the user's cart after the order is placed
+    cart_items.delete()
+
+    # Provide a success message and redirect to a success page
+    messages.success(request, "Thank you! Your order has been successfully placed.")
+    return redirect('order_success')
+
+def order_success(request):
+    return render(request , 'order_complete.html')

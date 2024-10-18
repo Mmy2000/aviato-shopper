@@ -22,10 +22,10 @@ class Payment(models.Model):
 
 class Order(models.Model):
     STATUS = (
-        ('New','New'),
-        ('Accepted','Accepted'),
-        ('Completed','Completed'),
-        ('Cancelled','Cancelled'),
+        ('New', 'New'),
+        ('On Delivery', 'On Delivery'),  # Add On Delivery status here
+        ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled'),
     )
     user = models.ForeignKey(User, verbose_name=_("user order"),on_delete=models.SET_NULL , null=True)
     payment = models.ForeignKey(Payment,  verbose_name=_("payment order"),on_delete=models.SET_NULL ,blank=True , null=True)
