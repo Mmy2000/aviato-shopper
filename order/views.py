@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.shortcuts import render , redirect
 
 from order.models import Order, OrderProduct, Payment
+from store.models import Product
 from .forms import OrderForm
 from cart.models import CartItem, Tax
 from django.http import JsonResponse
@@ -15,7 +16,65 @@ from django.template.loader import render_to_string
 
 
 def paypal_payment(request):
-    return render(request , 'payment.html')
+    body = json.loads(request.body)
+    order = Order.objects.get(user=request.user, is_orderd=False, order_number=body['orderID'])
+    # Store transaction details inside Payment model
+    payment = Payment(
+        user = request.user,
+        payment_id = body['transID'],
+        payment_method = body['payment_method'],
+        payment_paid = order.order_total,
+        status = body['status'],
+    )
+    payment.save()
+    order.payment = payment
+    order.is_orderd = True
+    order.status = 'Completed'
+    order.save()
+
+    cart_items = CartItem.objects.filter(user=request.user)
+
+    for item in cart_items:
+        orderproduct = OrderProduct()
+        orderproduct.order_id = order.id
+        orderproduct.payment = payment
+        orderproduct.user_id = request.user.id
+        orderproduct.product_id = item.product_id
+        orderproduct.quantity = item.quantity
+        orderproduct.product_price = item.product.price
+        orderproduct.ordered = True
+        orderproduct.save()
+
+        cart_item = CartItem.objects.get(id=item.id)
+        product_variation = cart_item.variations.all()
+        orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+        orderproduct.variations.set(product_variation)
+        orderproduct.save()
+
+        # Reduce the quantity of the sold products
+        product = Product.objects.get(id=item.product_id)
+        product.stock -= item.quantity
+        product.save()
+
+    # Clear cart
+    CartItem.objects.filter(user=request.user).delete()
+    # Send order recieved email to customer
+
+    mail_subject = 'Thank you for your order!'
+    message = render_to_string('order_recieved_email.html', {
+        'user': request.user,
+        'order': order,
+    })
+    to_email = request.user.email
+    send_email = EmailMessage(mail_subject, message, to=[to_email])
+    send_email.send()
+    
+    # Send order number and transaction id back to sendData method via JsonResponse
+    data = {
+        'order_number': order.order_number,
+        'transID': payment.payment_id,
+    }
+    return JsonResponse(data)
 
 
 def place_order(request,total=0, quantity=0):
@@ -88,8 +147,7 @@ def place_order(request,total=0, quantity=0):
         return redirect('checkout')
         
 
-
-
+# Cash Order
 def cash_order(request):
     current_user = request.user
 
