@@ -12,7 +12,7 @@
 				<ol class="breadcrumb">
 					<li><a href="/">Home</a></li>
 					<li><a href="{% url 'product_list'%}">Shop</a></li>
-					<li class="active">Single Product</li>
+					<li class="active">{{single_product.name}}</li>
 				</ol>
 			</div>
 			<div class="col-md-6">
@@ -158,7 +158,7 @@
 					<ul class="nav nav-tabs">
 						<li class="active"><a data-toggle="tab" href="#details" aria-expanded="true">Details</a></li>
 						<li class=""><a data-toggle="tab" href="#reviews" aria-expanded="false">Reviews
-								({{single_product.count_review}} )</a></li>
+								({{single_product.count_review}})</a></li>
 					</ul>
 					<div class="tab-content patternbg">
 						<div id="details" class="tab-pane fade active in">
