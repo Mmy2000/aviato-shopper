@@ -57,11 +57,15 @@ Payment
 
                 <!-- Payment Buttons -->
                 <div class="block payment-methods mt-4">
-                    <h4 class="widget-title text-uppercase font-weight-bold mb-3">Choose Payment Method</h4>
+                    <h4 class="widget-title text-uppercase font-weight-bold mb-3">Choose Paypal Account or Debit or Credit Card</h4>
                     <div class="d-flex justify-content-between">
-                        <div id="paypal-button-container">
+                        {% if order.payment_method == 'paypal' %}
+                        <div id="paypal-button-container" class="w-100" >
                             <!-- PayPal Button Will Load -->
                         </div>
+                        {% else %}
+                        Stripe
+                        {% endif %}
                         <!--Stripe Button Will Load her  -->
                     </div>
                 </div>
@@ -104,7 +108,7 @@ Payment
         </div>
     </div>
 </section>
-
+{% if order.payment_method == 'paypal' %}
 <script>
     function getCookie(name) {
         let cookieValue = null;
@@ -181,5 +185,7 @@ Payment
 
     }).render('#paypal-button-container');
 </script>
+{% else %}
+{% endif %}
 
 {% endblock %}

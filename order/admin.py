@@ -5,7 +5,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_display = ('payment_id', 'payment_method', 'payment_paid', 'status', 'created_at', 'user')
     list_filter = ('status', 'payment_method', 'created_at')
     search_fields = ('payment_id', 'payment_method', 'user__username')
-    readonly_fields = ('payment_id', 'payment_method', 'payment_paid', 'status', 'created_at', 'user')
+    readonly_fields = ('payment_id', 'created_at', 'user')
 
     class Meta:
         verbose_name = 'Payment'

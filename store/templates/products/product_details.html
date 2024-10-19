@@ -81,6 +81,25 @@
 						<h2>{{single_product}}</h2>
 						<p class="product-price">${{single_product.price}}</p>
 
+						<div class="d-flex mb-3">
+							<div class=" me-2">
+								<span>
+									<i class="fa fa-star{% if single_product.avr_review < 0.5%}-o{% elif single_product.avr_review >= 0.5 and single_product.avr_review < 1%}-half-o{%endif%}"
+										aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.avr_review < 1.5%}-o{% elif single_product.avr_review >= 1.5 and single_product.avr_review < 2%}-half-o{%endif%}"
+										aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.avr_review < 2.5%}-o{% elif single_product.avr_review >= 2.5 and single_product.avr_review < 3%}-half-o{%endif%}"
+										aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.avr_review < 3.5%}-o{% elif single_product.avr_review >= 3.5 and single_product.avr_review < 4%}-half-o{%endif%}"
+										aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.avr_review < 4.5%}-o{% elif single_product.avr_review >= 4.5 and single_product.avr_review < 5%}-half-o{%endif%}"
+										aria-hidden="true"></i>
+								</span>
+							</div>
+							<small class="pt-1">({{single_product.count_review}} Reviews)</small>
+
+						</div>
+
 						<p class="product-description mt-20">
 							{{single_product.description}}
 						</p>
@@ -138,7 +157,8 @@
 				<div class="tabCommon mt-20">
 					<ul class="nav nav-tabs">
 						<li class="active"><a data-toggle="tab" href="#details" aria-expanded="true">Details</a></li>
-						<li class=""><a data-toggle="tab" href="#reviews" aria-expanded="false">Reviews (3)</a></li>
+						<li class=""><a data-toggle="tab" href="#reviews" aria-expanded="false">Reviews
+								({{single_product.count_review}} )</a></li>
 					</ul>
 					<div class="tab-content patternbg">
 						<div id="details" class="tab-pane fade active in">
@@ -147,8 +167,8 @@
 
 						</div>
 						<div id="reviews" class="tab-pane fade">
-							<div class="post-comments">
-								<ul class="media-list comments-list m-bot-50 clearlist">
+							<div class="post-comments row">
+								<ul class="media-list comments-list m-bot-50 col-md-6 clearlist">
 									<!-- Comment Item start-->
 									<li class="media">
 
@@ -179,65 +199,59 @@
 									</li>
 									<!-- End Comment Item -->
 
-									<!-- Comment Item start-->
-									<li class="media">
-
-										<a class="pull-left" href="#!">
-											<img class="media-object comment-avatar" src="images/blog/avater-4.jpg"
-												alt="" width="50" height="50" />
-										</a>
-
-										<div class="media-body">
-
-											<div class="comment-info">
-												<div class="comment-author">
-													<a href="#!">Jonathon Andrew</a>
-												</div>
-												<time datetime="2013-04-06T13:53">July 02, 2015, at 11:34</time>
-												<a class="comment-button" href="#!"><i
-														class="tf-ion-chatbubbles"></i>Reply</a>
-											</div>
-
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque at
-												magna ut ante eleifend eleifend. Lorem ipsum dolor sit amet, consectetur
-												adipisicing elit. Magni natus, nostrum iste non delectus atque ab a
-												accusantium optio, dolor!
-											</p>
-
-										</div>
-
-									</li>
-									<!-- End Comment Item -->
-
-									<!-- Comment Item start-->
-									<li class="media">
-
-										<a class="pull-left" href="#!">
-											<img class="media-object comment-avatar" src="images/blog/avater-1.jpg"
-												alt="" width="50" height="50">
-										</a>
-
-										<div class="media-body">
-
-											<div class="comment-info">
-												<div class="comment-author">
-													<a href="#!">Jonathon Andrew</a>
-												</div>
-												<time datetime="2013-04-06T13:53">July 02, 2015, at 11:34</time>
-												<a class="comment-button" href="#!"><i
-														class="tf-ion-chatbubbles"></i>Reply</a>
-											</div>
-
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque at
-												magna ut ante eleifend eleifend.
-											</p>
-
-										</div>
-
-									</li>
 								</ul>
+								<div class="col-md-6">
+									<h4 class="mb-4">Leave a review</h4>
+									<form action="{% url 'submit_review' single_product.id %}" method="POST">
+										{% csrf_token %}
+										<div>
+											<label>How do you rate this product?</label>
+											<br>
+											<div class="rate">
+												<input id="rating10" value="5" type="radio" name="rating"
+													required><label for="rating10" title="5"></label>
+												<input id="rating9" value="4.5" type="radio" name="rating"
+													required><label for="rating9" title="4.5" class="half"></label>
+												<input id="rating8" value="4" type="radio" name="rating" required><label
+													for="rating8" title="4"></label>
+												<input id="rating7" value="3.5" type="radio" name="rating"
+													required><label for="rating7" title="3.5" class="half"></label>
+												<input id="rating6" value="3" type="radio" name="rating" required><label
+													for="rating6" title="3"></label>
+												<input id="rating5" value="2.5" type="radio" name="rating"
+													required><label for="rating5" title="2.5" class="half"></label>
+												<input id="rating4" value="2" type="radio" name="rating" required><label
+													for="rating4" title="2"></label>
+												<input id="rating3" value="1.5" type="radio" name="rating"
+													required><label for="rating3" title="1.5" class="half"></label>
+												<input id="rating2" value="1" type="radio" name="rating" required><label
+													for="rating2" title="1"></label>
+												<input id="rating1" value="0.5" type="radio" name="rating"
+													required><label for="rating1" title="0.5" class="half"></label>
+											</div>
+											<br>
+											Subject :
+											<input type="text" class="form-control" name="subject">
+											<br>
+											Your Review :
+											<textarea name="review" rows="4" class="form-control"
+												value="Your Rating"></textarea>
+											<br>
+											{% if user.is_authenticated %}
+											{% if orderproduct %}
+											<input type="submit" value="Submit Review" class="btn btn-main">
+											{% else %}
+											<p>You must purchase this product to post a review.</p>
+											{% endif %}
+											{% else %}
+											<p>You must be logged in to post a review. <span><a
+														href="{% url 'login'%}">Login
+														now</a></span>
+											</p>
+											{% endif %}
+										</div>
+									</form>
+								</div>
 							</div>
 						</div>
 					</div>

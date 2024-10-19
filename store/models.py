@@ -7,6 +7,7 @@ from accounts.models import User
 from category.models import Subcategory 
 from decimal import Decimal
 from taggit.managers import TaggableManager
+from django.db.models import Avg , Count
 
 # Create your models here.
 
@@ -36,6 +37,20 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super(Product, self).save(*args, **kwargs)
+
+    def avr_review(self):
+        reviews = ReviewRating.objects.filter(product=self , status=True).aggregate(average=Avg('rating'))
+        avg =0
+        if reviews['average'] is not None:
+            avg = float(reviews['average'])
+        return avg
+    
+    def count_review(self):
+        reviews = ReviewRating.objects.filter(product=self , status=True).aggregate(count=Count('rating'))
+        count = 0
+        if reviews['count'] is not None:
+            count = int(reviews['count'])
+        return count
 
     def __str__(self):
         return self.name
@@ -92,3 +107,17 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return str(self.product)
+    
+class ReviewRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,related_name='reviewrating', on_delete=models.CASCADE)
+    subject = models.CharField(max_length=500 , blank=True)
+    review = models.TextField(max_length=500 , blank=True)
+    rating = models.FloatField()
+    ip = models.CharField( max_length=50 , blank=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField( auto_now_add=True)
+    updated_at = models.DateTimeField( auto_now=True)
+
+    def __str__(self):
+        return self.subject

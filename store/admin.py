@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductImage, Brand, Variation
+from .models import Product, ProductImage, Brand, Variation, ReviewRating
 from django.utils.html import mark_safe
 
 # Inline class for Product images
@@ -17,16 +17,16 @@ class VariationInline(admin.TabularInline):
 # Admin class for Product
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'PRDBrand', 'category', 'price', 'stock', 'on_sale','views', 'is_available', 'created_at')
+    list_display = ('id', 'name', 'PRDBrand', 'category', 'price', 'stock', 'on_sale', 'views', 'is_available', 'average_rating', 'review_count', 'created_at')
     search_fields = ('name', 'PRDBrand__name', 'category__name', 'description')
-    list_filter = ('is_available','on_sale', 'category', 'PRDBrand', 'created_at')
+    list_filter = ('is_available', 'on_sale', 'category', 'PRDBrand', 'created_at')
     readonly_fields = ('slug', 'created_at', 'modified_date', 'views')
-    list_editable = ('price', 'stock', 'is_available','on_sale')
+    list_editable = ('price', 'stock', 'is_available', 'on_sale')
     ordering = ['-created_at']
-    inlines = [ProductImageInline, VariationInline]  # Adding VariationInline here
+    inlines = [ProductImageInline, VariationInline]
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'description', 'image', 'PRDBrand', 'category', 'price', 'stock', 'is_available','on_sale')
+            'fields': ('name', 'slug', 'description', 'image', 'PRDBrand', 'category', 'price', 'stock', 'is_available', 'on_sale')
         }),
         ('Additional Information', {
             'classes': ('collapse',),
@@ -34,10 +34,19 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
+    # Display average rating and review count in admin list
+    def average_rating(self, obj):
+        return obj.avr_review()
+    average_rating.short_description = 'Avg. Rating'
+    
+    def review_count(self, obj):
+        return obj.count_review()
+    review_count.short_description = 'Review Count'
+
 # Admin class for Brand
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'website', 'created_at', 'updated_at', 'product_count_in_brand')
+    list_display = ('id', 'name', 'website', 'created_at', 'updated_at', 'product_count_in_brand')
     search_fields = ('name',)
     readonly_fields = ('created_at', 'updated_at')
     list_filter = ('created_at',)
@@ -80,3 +89,23 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('variation_category', 'is_active')
     search_fields = ('product__name', 'variation_value')
     ordering = ['product', 'variation_category', 'variation_value']
+
+@admin.register(ReviewRating)
+class ReviewRatingAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'subject', 'rating', 'status', 'created_at')
+    list_filter = ('status', 'created_at', 'rating')
+    search_fields = ('user__username', 'product__name', 'subject')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ['-created_at']
+
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'product', 'subject', 'review', 'rating', 'status')
+        }),
+        ('Additional Information', {
+            'fields': ('ip', 'created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+    
