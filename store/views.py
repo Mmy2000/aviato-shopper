@@ -57,6 +57,7 @@ def product_details(request,product_id):
 
     try:
         single_product = Product.objects.get(id=product_id)
+        reviews = ReviewRating.objects.filter(product_id=single_product.id , status=True)
         if request.user.is_authenticated:
             in_cart = CartItem.objects.filter(user=request.user , product = product_id).exists()
             try:
@@ -81,6 +82,7 @@ def product_details(request,product_id):
         'product_gallary':product_gallary,
         'related':related,
         'in_cart':in_cart,
+        'reviews':reviews,
         'orderproduct':orderproduct,
         'orderproduct_count':orderproduct_count
     }

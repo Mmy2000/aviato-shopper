@@ -82,7 +82,7 @@
 						<p class="product-price">${{single_product.price}}</p>
 
 						<div class="d-flex mb-3">
-							<div class=" me-2">
+							<div class="rating-star me-2">
 								<span>
 									<i class="fa fa-star{% if single_product.avr_review < 0.5%}-o{% elif single_product.avr_review >= 0.5 and single_product.avr_review < 1%}-half-o{%endif%}"
 										aria-hidden="true"></i>
@@ -170,35 +170,51 @@
 							<div class="post-comments row">
 								<ul class="media-list comments-list m-bot-50 col-md-6 clearlist">
 									<!-- Comment Item start-->
+									{% for review in reviews %}
 									<li class="media">
-
+										{% if review.user.profile.image %}
 										<a class="pull-left" href="#!">
-											<img class="media-object comment-avatar" src="images/blog/avater-1.jpg"
+											<img class="media-object comment-avatar" src="{{review.user.profile.image.url}}"
 												alt="" width="50" height="50" />
 										</a>
+										{% else %}
+										<a class="pull-left" href="#!">
+											<img class="media-object comment-avatar" src="https://bootdey.com/img/Content/avatar/avatar7.png"
+												alt="" width="50" height="50" />
+										</a>
+										{% endif %}
 
 										<div class="media-body">
 											<div class="comment-info">
 												<h4 class="comment-author">
-													<a href="#!">Jonathon Andrew</a>
+													<a href="#!">{{review.user.profile.full_name}}</a>
 
 												</h4>
-												<time datetime="2013-04-06T13:53">July 02, 2015, at 11:34</time>
-												<a class="comment-button" href="#!"><i
-														class="tf-ion-chatbubbles"></i>Reply</a>
+												<time datetime="2013-04-06T13:53">{{review.updated_at}}</time>
+												
+														<div class="rating-star">
+                                        <span>
+                                            <i class="fa fa-star{% if review.rating == 0.5%}-half-o{% elif review.rating < 1%}-o{%endif%}"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if review.rating == 1.5%}-half-o{% elif review.rating < 2%}-o{%endif%}"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if review.rating == 2.5%}-half-o{% elif review.rating < 3%}-o{%endif%}"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if review.rating == 3.5%}-half-o{% elif review.rating < 4%}-o{%endif%}"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if review.rating == 4.5%}-half-o{% elif review.rating < 5%}-o{%endif%}"
+                                                aria-hidden="true"></i>
+                                        </span>
+                                    </div>
 											</div>
 
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque at
-												magna ut ante eleifend eleifend.Lorem ipsum dolor sit amet, consectetur
-												adipisicing elit. Quod laborum minima, reprehenderit laboriosam officiis
-												praesentium? Impedit minus provident assumenda quae.
-											</p>
+											<h6><strong>{{review.subject}}</strong></h6>
+                                    <p>{{review.review}}</p>
 										</div>
 
 									</li>
 									<!-- End Comment Item -->
-
+									{% endfor %}
 								</ul>
 								<div class="col-md-6">
 									<h4 class="mb-4">Leave a review</h4>
