@@ -2411,59 +2411,6 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
   font-size: 20px;
   color: #555;
 }
-/*# sourceMappingURL=style.css.map */
-.pagination-section {
-    margin-top: 40px;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-}
-
-.page-item {
-    margin: 0 3px;
-}
-
-.page-link {
-    padding: 8px 15px;
-    border-radius: 5px;
-    color: #555;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.page-link:hover {
-    background-color: black;
-    color: white;
-    border-color: black;
-}
-
-.page-item.active .page-link {
-    background-color: black;
-    border-color: black;
-    color: white;
-}
-
-.page-item.disabled .page-link {
-    color: #aaa;
-    pointer-events: none;
-    background-color: #f8f9fa;
-    border-color: #ddd;
-}
-
-@media (max-width: 768px) {
-    .pagination {
-        font-size: 14px;
-    }
-
-    .page-link {
-        padding: 6px 10px;
-    }
-}
 
 
 
