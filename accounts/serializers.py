@@ -3,6 +3,8 @@ import string
 from rest_framework import serializers
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -34,6 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         user = User.objects.create(username=username, **validated_data)
         user.set_password(password)
+        user.is_active = True
         user.save()
 
         # Generate JWT tokens
@@ -43,3 +46,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
+        # Authenticate user
+        user = authenticate(email=email, password=password)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Invalid credentials, please try again.")
