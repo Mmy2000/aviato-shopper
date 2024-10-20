@@ -10,10 +10,20 @@ class CategorySerializer(serializers.ModelSerializer):
         fields ='__all__'
 
 class SubCategorySerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Allow category_id input
+
     class Meta:
         model = Subcategory
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        """
+        Override this method to display category details in the response,
+        while still allowing category_id to be passed on input.
+        """
+        representation = super().to_representation(instance)
+        representation['category'] = CategorySerializer(instance.category).data  # Nest the full category details
+        return representation
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
