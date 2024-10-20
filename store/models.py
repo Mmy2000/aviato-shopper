@@ -54,7 +54,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='product/')
+
+    def __str__(self):
+        return str(self.product)   
     
 class VariationManager(models.Manager):
     def colors(self):
@@ -101,12 +107,7 @@ class Brand(models.Model):
     def __str__(self):
         return self.name
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='product/')
 
-    def __str__(self):
-        return str(self.product)
     
 class ReviewRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

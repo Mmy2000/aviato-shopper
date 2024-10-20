@@ -71,7 +71,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'first_name', 'last_name', 'image', 'about', 
             'country', 'address_line_1', 'address_line_2', 
-            'headline', 'city'
+            'headline', 'city','full_name','full_address'
         ]
         read_only_fields = ['user']  # Prevent direct editing of user field
 
