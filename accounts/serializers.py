@@ -73,16 +73,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             'country', 'address_line_1', 'address_line_2', 
             'headline', 'city'
         ]
-        read_only_fields = ['user']
+        read_only_fields = ['user']  # Prevent direct editing of user field
 
     def update(self, instance, validated_data):
-        # Update user first name and last name
+        # Handle updating the user's first and last name
         user_data = validated_data.pop('user', None)
         if user_data:
             user = instance.user
             user.first_name = user_data.get('first_name', user.first_name)
             user.last_name = user_data.get('last_name', user.last_name)
             user.save()
-        
-        # Update the rest of the profile
+
+        # Update profile fields
         return super().update(instance, validated_data)
