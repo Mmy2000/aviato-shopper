@@ -16,6 +16,7 @@ urlpatterns = [
     path('brand/<str:brand_id>/' , views.product_list , name='products_by_brand'),
     path('search/' , views.search , name='search'),
     path('submit_review/<str:product_id>/',views.submit_review ,name='submit_review'),
+    path('add_to_favourit/<str:id>',views.add_to_favourit ,name='add_to_favourit'),
 
     # API
     path("api/products/", ProductListApi.as_view(), name="product_list"),

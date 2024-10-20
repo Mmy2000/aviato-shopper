@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render,redirect
-
+from django.http import HttpResponseRedirect
 from order.models import OrderProduct
 from store.forms import ReviewForm
 from .models import Product , Brand , ProductImage, ReviewRating
@@ -131,3 +131,14 @@ def submit_review(request , product_id):
                 data.save()
                 messages.success(request,'Thank You , Your Review has been submitted.')
                 return redirect(url)
+
+def add_to_favourit(request,id):
+    product = Product.objects.get(id=id)
+    if request.user in product.like.all():
+        product.like.remove(request.user.id)
+        messages.success(request,'Product deleted Successfully from Favorite')
+    else:
+        product.like.add(request.user.id)
+        messages.success(request,'Product added Successfully to Favorite')
+        
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

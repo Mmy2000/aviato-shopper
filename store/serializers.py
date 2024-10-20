@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Product, ProductImage, Brand , Variation
 from category.models import Category , Subcategory
-from rest_framework import viewsets
 
 
 class CategorySerializer(serializers.ModelSerializer):
