@@ -1,7 +1,7 @@
 import random
 import string
 from rest_framework import serializers
-from .models import User
+from .models import User , Profile
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 
@@ -60,3 +60,29 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid credentials, please try again.")
+    
+
+class ProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='user.first_name', required=True)
+    last_name = serializers.CharField(source='user.last_name', required=True)
+    
+    class Meta:
+        model = Profile
+        fields = [
+            'user', 'first_name', 'last_name', 'image', 'about', 
+            'country', 'address_line_1', 'address_line_2', 
+            'headline', 'city'
+        ]
+        read_only_fields = ['user']
+
+    def update(self, instance, validated_data):
+        # Update user first name and last name
+        user_data = validated_data.pop('user', None)
+        if user_data:
+            user = instance.user
+            user.first_name = user_data.get('first_name', user.first_name)
+            user.last_name = user_data.get('last_name', user.last_name)
+            user.save()
+        
+        # Update the rest of the profile
+        return super().update(instance, validated_data)

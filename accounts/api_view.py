@@ -1,8 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer , ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics, permissions
+from . models import Profile
+
 
 class RegisterView(APIView):
     def post(self, request):
@@ -58,3 +61,11 @@ class LoginView(APIView):
             "message": "Login failed. Invalid credentials.",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+class ProfileDetailUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # Return the profile for the authenticated user
+        return Profile.objects.get(user=self.request.user)
