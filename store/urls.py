@@ -1,6 +1,6 @@
 from django.urls import path,include
 from . import views
-from .api_view import ProductListApi,ProductCreateUpdateView,ProductDeleteView,ProductDetailApi
+from .api_view import AllProductImagesView, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi,ProductCreateUpdateView,ProductDeleteView,ProductDetailApi
 
 
 urlpatterns = [
@@ -18,4 +18,10 @@ urlpatterns = [
     path('api/product/create/', ProductCreateUpdateView.as_view(), name='product-create'),  # POST for create
     path('api/product/update/<uuid:pk>/', ProductCreateUpdateView.as_view(), name='product-update'),  # PUT for update
     path('api/product/delete/<uuid:pk>/', ProductDeleteView.as_view(), name='product-delete'),  # DELETE for delete
+
+    path('api/product/images/all/', AllProductImagesView.as_view(), name='all-product-images'),
+    path('api/product/<uuid:product_id>/create/', ProductImageCreateView.as_view(), name='product-image-create'),  # POST: Add image to product
+    path('api/product/<uuid:product_id>/images/', ProductImageListView.as_view(), name='product-image-list'),  # GET: List images for a product
+    path('api/product/update/<uuid:product_id>/images/<int:image_id>/', ProductImageUpdateView.as_view(), name='product-image-update'),  # PUT: Update product image
+    path('api/product/delete/<uuid:product_id>/images/<int:image_id>/', ProductImageDeleteView.as_view(), name='product-image-delete'),  # DELETE: Delete an image by product_id and image_id
 ]

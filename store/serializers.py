@@ -40,9 +40,8 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'image', 'stock', 'price', 'description', 'created_at', 'modified_date', 'slug', 'views', 'is_available', 'on_sale', 'PRDBrand','variations', 'like', 'category', 'images', 'avr_review', 'count_review']
 
 
-
-class ProductImageFormSerializer(serializers.ModelSerializer):
+class SampleProductImageSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = ProductImage
-        fields = ['image']
-
+        fields = ['id', 'image','product']
