@@ -1,13 +1,7 @@
 from django.urls import path,include
 from . import views
+from .api_view import ProductListApi,ProductCreateUpdateView,ProductDeleteView,ProductDetailApi
 
-from rest_framework.routers import DefaultRouter
-from .api_view import ProductViewSet, ProductImageViewSet, VariationViewSet
-
-router = DefaultRouter()
-router.register('api/products', ProductViewSet, basename='product_api')
-router.register('api/product-images', ProductImageViewSet, basename='productimage_api')
-router.register('api/variations', VariationViewSet, basename='variation_api')
 
 urlpatterns = [
     path('' , views.product_list , name='product_list'),
@@ -19,5 +13,9 @@ urlpatterns = [
     path('submit_review/<str:product_id>/',views.submit_review ,name='submit_review'),
 
     # API
-    path('', include(router.urls)),
+    path("api/products/", ProductListApi.as_view(), name="product_list"),
+    path("api/product/<uuid:pk>/", ProductDetailApi.as_view(), name="product_details"),
+    path('api/product/create/', ProductCreateUpdateView.as_view(), name='product-create'),  # POST for create
+    path('api/product/update/<uuid:pk>/', ProductCreateUpdateView.as_view(), name='product-update'),  # PUT for update
+    path('api/product/delete/<uuid:pk>/', ProductDeleteView.as_view(), name='product-delete'),  # DELETE for delete
 ]
