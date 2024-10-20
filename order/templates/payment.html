@@ -51,7 +51,7 @@ Payment
                         <li><strong>Order Number:</strong> <span class="text-muted">{{ order.order_number }}</span></li>
                         <li><strong>Total Amount:</strong> <span class="text-muted">${{ order.order_total }}</span></li>
                         <li><strong>Tax:</strong> <span class="text-muted">${{ order.tax }}</span></li>
-                        <li><strong>Grand Total:</strong> <span class="text-muted font-weight-bold">${{ order.grand_total }}</span></li>
+                        <li><strong>Grand Total:</strong> <span class="text-muted font-weight-bold">${{ order.order_total }}</span></li>
                     </ul>
                 </div>
 
@@ -64,7 +64,23 @@ Payment
                             <!-- PayPal Button Will Load -->
                         </div>
                         {% else %}
-                        Stripe
+                        <form id="payment-form">
+                        <input type="text" id="email" placeholder=Email address />
+                        <div id="card-element">
+                            <!--Stripe.js injects the Card Element-->
+                        </div>
+                        <button id="submit" disabled>
+                            <div class="spinner hidden" id="spinner"></div>
+                            <span id="button-text">Pay</span>
+                        </button>
+                        <p id="card-error" role="alert"></p>
+                        <p class="result-message hidden">
+                            Payment succeeded, see the result in your
+                            <a href="" target="_blank">Stripe dashboard.</a> 
+                            Refresh the page to pay again.
+                        </p>
+                    </form>
+                        
                         {% endif %}
                         <!--Stripe Button Will Load her  -->
                     </div>
@@ -185,7 +201,134 @@ Payment
 
     }).render('#paypal-button-container');
 </script>
-{% else %}
+{% elif order.payment_method == 'stripe' %}
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stripe = Stripe('{{ stripe_publishable_key }}');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        const submitButton = document.getElementById('submit');
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('button-text');
+        const cardError = document.getElementById('card-error');
+
+        // Disable the submit button initially
+        submitButton.disabled = true;
+
+        // Add an event listener to the card element
+        cardElement.on('change', function (event) {
+            // Enable the submit button if the card details are complete
+            submitButton.disabled = !event.complete;
+            // Display card errors if any
+            cardError.textContent = event.error ? event.error.message : '';
+        });
+
+        submitButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            // Show spinner and hide button text
+            spinner.classList.remove('hidden');
+            buttonText.classList.add('hidden');
+
+            // Disable the submit button when spinner is visible
+            submitButton.disabled = true;
+
+            const response = await fetch("{% url 'create_payment_intent' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    orderID: "{{ order.order_number }}",
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.text();
+                console.error('Error response from server:', error);
+                // Hide spinner and show button text
+                spinner.classList.add('hidden');
+                buttonText.classList.remove('hidden');
+
+                // Enable the submit button when spinner is hidden
+                submitButton.disabled = false;
+                return;
+            }
+
+            const data = await response.json();
+            const {
+                clientSecret
+            } = data;
+
+            const {
+                paymentIntent,
+                error
+            } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: '{{ order.full_name }}',
+                        email: '{{ order.email }}'
+                    },
+                }
+            });
+
+            if (error) {
+                console.error('Error:', error);
+                cardError.textContent = error.message;
+                // Hide spinner and show button text
+                spinner.classList.add('hidden');
+                buttonText.classList.remove('hidden');
+
+                // Enable the submit button when spinner is hidden
+                submitButton.disabled = false;
+            } else {
+                if (paymentIntent.status === 'succeeded') {
+                    fetch("{% url 'stripe_payment' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken'),
+                            },
+                            body: JSON.stringify({
+                                orderID: "{{ order.order_number }}",
+                                paymentIntentId: paymentIntent.id,
+                                payment_method: 'Stripe',
+                                status: paymentIntent.status,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            window.location.href = "{% url 'order_success' %}" +
+                                '?order_number=' + data.order_number + '&payment_id=' + data
+                                .payment_id;
+                        });
+                }
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+
 {% endif %}
 
 {% endblock %}
