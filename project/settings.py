@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'order',
 
     'rest_framework',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -67,7 +68,15 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # For React or other front-end dev servers
+    'http://127.0.0.1:8000',  # Django local development server
+]
+
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Must be placed at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
