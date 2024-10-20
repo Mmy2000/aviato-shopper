@@ -1,7 +1,12 @@
 from django.urls import path,include
-from . import views
-from .api_view import AllProductImagesView, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi,ProductCreateUpdateView,ProductDeleteView,ProductDetailApi
 
+from . import views
+from .api_view import AllProductImagesView, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi,ProductCreateUpdateView,ProductDeleteView,ProductDetailApi,CategoryViewSet,SubCategoryViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'api/categories', CategoryViewSet)
+router.register(r'api/subcategories', SubCategoryViewSet)
 
 urlpatterns = [
     path('' , views.product_list , name='product_list'),
@@ -24,4 +29,6 @@ urlpatterns = [
     path('api/product/<uuid:product_id>/images/', ProductImageListView.as_view(), name='product-image-list'),  # GET: List images for a product
     path('api/product/update/<uuid:product_id>/images/<int:image_id>/', ProductImageUpdateView.as_view(), name='product-image-update'),  # PUT: Update product image
     path('api/product/delete/<uuid:product_id>/images/<int:image_id>/', ProductImageDeleteView.as_view(), name='product-image-delete'),  # DELETE: Delete an image by product_id and image_id
+
+    path('', include(router.urls)),
 ]

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Product, ProductImage, Brand , Variation
 from category.models import Category , Subcategory
+from rest_framework import viewsets
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -45,3 +46,4 @@ class SampleProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ['id', 'image','product']
+

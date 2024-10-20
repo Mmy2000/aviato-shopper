@@ -1,11 +1,15 @@
 from django.http import JsonResponse
-from .serializers import   ProductSerializer , ProductImageSerializer, SampleProductImageSerializer
+
+from category.models import Category, Subcategory
+from store.permissions import IsSuperAdmin
+from .serializers import   CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer
 from .models import Product , ProductImage
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 
 
 
@@ -107,3 +111,13 @@ class ProductImageDeleteView(APIView):
 class AllProductImagesView(generics.ListAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = SampleProductImageSerializer
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsSuperAdmin]  # Apply custom permission
+
+class SubCategoryViewSet(viewsets.ModelViewSet):
+    queryset = Subcategory.objects.all()
+    serializer_class = SubCategorySerializer
+    permission_classes = [IsSuperAdmin]  # Apply custom permission
