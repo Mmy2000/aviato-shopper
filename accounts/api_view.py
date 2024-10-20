@@ -13,7 +13,10 @@ class RegisterView(APIView):
                 "message": "User registered successfully",
                 "user": {
                     "email": data['user'].email,
-                    "username": data['user'].username
+                    "username": data['user'].username,
+                    'is_admin':data['user'].is_admin,
+                    'is_staff':data['user'].is_staff,
+                    'is_superadmin':data['user'].is_superadmin,
                 },
                 "refresh": data['refresh'],
                 "access": data['access']
@@ -29,5 +32,8 @@ class LoginView(APIView):
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'is_admin':user.is_admin,
+                'is_staff':user.is_staff,
+                'is_superadmin':user.is_superadmin,
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
