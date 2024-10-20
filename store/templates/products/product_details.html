@@ -300,7 +300,11 @@
 									</span>
 								</li>
 								<li>
-									<a href="#"><i class="tf-ion-ios-heart"></i></a>
+									{% if request.user in product.like.all %}
+                                            <a href="{% url 'add_to_favourit' product.id%}"><i class="fa-solid fa-heart"></i></a>
+                                            {% else %}
+                                            <a href="{% url 'add_to_favourit' product.id%}"><i class="fa-regular fa-heart"></i></a>
+                                            {% endif %}
 								</li>
 								<li>
 									<a href="{% url 'add_to_cart' product.id%}"><i class="tf-ion-android-cart"></i></a>

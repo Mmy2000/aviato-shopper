@@ -10,14 +10,10 @@ Products
         <div class="row">
             <div class="col-md-12">
                 <div class="content">
-                    {% if 'search' in request.path %}
-                    <h2 class="title-page"> Search Result</h2>
-                    {% else %}
-                    <h1 class="page-name">Shop</h1>
-                    {% endif %}
+                    <h2 class="title-page"> Favorite Products</h2>
                     <ol class="breadcrumb">
                         <li><a href="/">Home</a></li>
-                        <li class="active">shop</li>
+                        <li class="active">Account</li>
                     </ol>
                 </div>
             </div>
@@ -25,66 +21,11 @@ Products
     </div>
 </section>
 
-
 <section class="products section">
     <div class="container">
         {% include "includes/alerts.html" %}
         <div class="row">
-
-            <div class="col-md-3">
-                <!-- Sidebar with categories, brands, etc. -->
-                <div class="widget">
-                    <h4 class="widget-title">Short By</h4>
-                    <form method="post" action="#">
-                        <select class="form-control">
-                            <option>Man</option>
-                            <option>Women</option>
-                            <option>Accessories</option>
-                            <option>Shoes</option>
-                        </select>
-                    </form>
-                </div>
-                <div class="widget product-category">
-                    <h4 class="widget-title">Categories</h4>
-                    <div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
-                        {% for category in categories_nav %}
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="heading{{ category.id }}">
-                                <h4 class="panel-title">
-                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                                        href="#collapse{{ category.id }}" aria-expanded="false"
-                                        aria-controls="collapse{{ category.id }}">
-                                        {{ category.name }}
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapse{{ category.id }}" class="panel-collapse collapse" role="tabpanel"
-                                aria-labelledby="heading{{ category.id }}">
-                                <div class="panel-body">
-                                    <ul>
-                                        {% for subcategory in category.subcategories.all %}
-                                        <li><a href="{{subcategory.get_url}}">{{ subcategory.name }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="widget">
-                    <h4 class="widget-title">Brands</h4>
-                    <select class="form-control" onchange="window.location.href=this.value;">
-                        <option value="">Select a Brand</option> <!-- Default option -->
-                        {% for brand in brands_nav %}
-                        <option value="{{ brand.get_url }}">{{ brand }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <!-- Check if there are products -->
                 {% if products %}
                 <div class="product-count">
@@ -93,7 +34,7 @@ Products
                 </div>
                 <div class="row">
                     {% for product in products %}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="product-item">
                             <div class="product-thumb">
                                 {% if product.on_sale %}
@@ -182,6 +123,7 @@ Products
                 </div>
                 {% endif %}
             </div>
+        
         </div>
         <div class="pagination-section text-center">
             <nav aria-label="Page navigation">
@@ -236,8 +178,8 @@ Products
                 </ul>
             </nav>
         </div>
-
     </div>
 </section>
 
-{% endblock body %}
+
+{% endblock %}

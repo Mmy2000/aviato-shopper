@@ -19,8 +19,8 @@ urlpatterns = [
     path('add_to_favourit/<str:id>',views.add_to_favourit ,name='add_to_favourit'),
 
     # API
-    path("api/products/", ProductListApi.as_view(), name="product_list"),
-    path("api/product/<uuid:pk>/", ProductDetailApi.as_view(), name="product_details"),
+    path("api/products/", ProductListApi.as_view(), name="product_list_api"),
+    path("api/product/<uuid:pk>/", ProductDetailApi.as_view(), name="product_details_api"),
     path('api/product/create/', ProductCreateUpdateView.as_view(), name='product-create'),  # POST for create
     path('api/product/update/<uuid:pk>/', ProductCreateUpdateView.as_view(), name='product-update'),  # PUT for update
     path('api/product/delete/<uuid:pk>/', ProductDeleteView.as_view(), name='product-delete'),  # DELETE for delete

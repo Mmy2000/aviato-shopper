@@ -148,6 +148,7 @@
 								{% if user.is_authenticated %}
 								<li><a href="{% url 'dashboard'%}"><i class="fa-solid fa-chart-line me-2"></i>Dashboard</a></li>
 								<li><a href="{% url 'profile'%}"><i class="fa-solid fa-address-card me-2"></i>Profile</a></li>
+								<li><a href="{% url 'favorite'%}"><i class="fa-solid fa-star me-2"></i>My Favorite</a></li>
 								<li><a href="{% url 'logout' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
 
 								{% else %}

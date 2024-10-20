@@ -1,8 +1,9 @@
 from django.shortcuts import render , redirect , get_object_or_404
-
+from django.core.paginator import Paginator
 from cart.cart_utils import _cart_id
 from cart.models import Cart, CartItem
 from order.models import Order, OrderProduct
+from store.models import Product
 from .forms import RegistrationForm , UserForm , ProfileForm
 from .models import User , Profile
 from django.contrib import messages, auth
@@ -286,3 +287,13 @@ def order_detail(request,order_id):
         'subtotal':subtotal,
     }
     return render(request,'profile/order_detail.html',context)
+
+@login_required(login_url='login')
+def favorite(request):
+    products = Product.objects.filter(like=request.user)
+    product_count = products.count()
+    paginator = Paginator(products,8)
+    page = request.GET.get('page')
+    paged_product = paginator.get_page(page)
+
+    return render(request , 'profile/favorite.html',{'products':paged_product,'product_count':product_count})
