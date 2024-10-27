@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from category.models import Category, Subcategory
 from store.permissions import IsSuperAdmin
 from .serializers import   CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer
-from .models import Product , ProductImage
+from .models import Product , ProductImage, Variation
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,6 +16,7 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+import json
 
 
 class ProductListApi(generics.ListAPIView):
@@ -27,15 +28,19 @@ class ProductDetailApi(generics.RetrieveAPIView):
     queryset = Product.objects.all()
 
 # Create and Update Product View
+
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
 def create_product(request):
-    product_form = ProductForm(request.POST , request.FILES)
+    # Process product form
+    product_form = ProductForm(request.POST, request.FILES)
     print("before product_form.is_valid()")
     if product_form.is_valid():
         print("after product_form.is_valid()")
         product = product_form.save(commit=True)
+
+        # Process product images
         product_images = request.FILES.getlist('images')
         for image in product_images:
             product_image_form = ProductImagesForm({'product': product.id}, {'image': image})
@@ -47,10 +52,42 @@ def create_product(request):
             else:
                 print("Error with image form:", product_image_form.errors)
                 return JsonResponse({'errors': product_image_form.errors}, status=400)
-        return JsonResponse({'success':True})
+
+        # Process variations
+        variations = request.data.get('variations', '[]')
+        
+        # Parse variations as JSON if it's a string
+        if isinstance(variations, str):
+            try:
+                variations = json.loads(variations)
+            except json.JSONDecodeError:
+                return JsonResponse({'errors': 'Invalid JSON format for variations.'}, status=400)
+
+        for variation_data in variations:
+            variation_category = variation_data.get('variation_category')
+            variation_value = variation_data.get('variation_value')
+            
+            # Ensure both category and value are provided
+            if not variation_category or not variation_value:
+                return JsonResponse(
+                    {'errors': 'Both variation_category and variation_value are required.'},
+                    status=400
+                )
+
+            # Create and associate the Variation instance with the Product
+            Variation.objects.create(
+                product=product,
+                variation_category=variation_category,
+                variation_value=variation_value
+            )
+
+        return JsonResponse({'success': True})
+    
     else:
-        print("error",product_form.errors,product_form.non_field_errors)
-        return JsonResponse({'errors':product_form.errors.as_json()},status=400)
+        print("error", product_form.errors, product_form.non_field_errors)
+        return JsonResponse({'errors': product_form.errors}, status=400)
+
+
     
 @api_view(["PUT"]) 
 @authentication_classes([])
