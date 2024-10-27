@@ -47,7 +47,7 @@ class ProductSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Product
-        fields = ['id', 'name', 'image', 'stock', 'price', 'description', 'created_at', 'modified_date', 'slug', 'views', 'is_available', 'on_sale', 'PRDBrand','variations', 'like', 'category', 'images', 'avr_review', 'count_review']
+        fields = ['id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 'category', 'images', 'avr_review', 'count_review']
 
 
 class SampleProductImageSerializer(serializers.ModelSerializer):

@@ -10,7 +10,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-
+from .forms import ProductForm , ProductImagesForm
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 
 
 class ProductListApi(generics.ListAPIView):
@@ -22,38 +27,33 @@ class ProductDetailApi(generics.RetrieveAPIView):
     queryset = Product.objects.all()
 
 # Create and Update Product View
-class ProductCreateUpdateView(APIView):
-    def post(self, request):
-        # Create Product
-        product_serializer = ProductSerializer(data=request.data)
-        if product_serializer.is_valid():
-            product = product_serializer.save()
-
-            # Handle images
-            images_data = request.FILES.getlist('images')
-            for image in images_data:
-                ProductImage.objects.create(product=product, image=image)
-
-            return Response(product_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        # Update Product
-        product = get_object_or_404(Product, pk=pk)
-        product_serializer = ProductSerializer(product, data=request.data, partial=True)
-
-        if product_serializer.is_valid():
-            product = product_serializer.save()
-
-            # Handle images
-            images_data = request.FILES.getlist('images')
-            for image in images_data:
-                ProductImage.objects.create(product=product, image=image)
-
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
-        return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def create_product(request):
+    product_form = ProductForm(request.POST , request.FILES)
+    print("before product_form.is_valid()")
+    if product_form.is_valid():
+        print("after product_form.is_valid()")
+        product = product_form.save(commit=True)
+        product_images = request.FILES.getlist('images')
+        for image in product_images:
+            product_image_form = ProductImagesForm({'product': product.id}, {'image': image})
+            if product_image_form.is_valid():
+                print("after product_image_form.is_valid()")
+                product_image = product_image_form.save(commit=False)
+                product_image.product = product  # Associate the product with the image
+                product_image.save()
+            else:
+                print("Error with image form:", product_image_form.errors)
+                return JsonResponse({'errors': product_image_form.errors}, status=400)
+        return JsonResponse({'success':True})
+    else:
+        print("error",product_form.errors,product_form.non_field_errors)
+        return JsonResponse({'errors':product_form.errors.as_json()},status=400)
 
 # Delete Product View
+
 class ProductDeleteView(APIView):
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
