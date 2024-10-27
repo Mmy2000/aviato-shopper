@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Product, ProductImage, Brand , Variation
+from .models import Product, ProductImage, Brand , Variation,ReviewRating
 from category.models import Category , Subcategory
+from accounts.models import User
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +40,12 @@ class VariationSerializer(serializers.ModelSerializer):
         model = Variation
         fields = ['id', 'variation_category', 'variation_value', 'is_active', 'created_at']
 
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = ReviewRating
+        fields = '__all__'
+
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
@@ -44,10 +56,11 @@ class ProductSerializer(serializers.ModelSerializer):
     category = SubCategorySerializer(read_only=True)
     PRDBrand = BrandSerializer(read_only=True)
     variations = VariationSerializer(source='product_variation', many=True, read_only=True)
+    reviewrating = ReviewSerializer(many=True, read_only=True)
     
     class Meta:
         model = Product
-        fields = ['id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 'category', 'images', 'avr_review', 'count_review']
+        fields = ['id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 'category','PRDBrand','variations', 'images','reviewrating', 'avr_review', 'count_review']
 
 
 class SampleProductImageSerializer(serializers.ModelSerializer):
