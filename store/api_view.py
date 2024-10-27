@@ -89,32 +89,71 @@ def create_product(request):
 
 
     
-@api_view(["PUT"]) 
+@api_view(["PUT"])
 @authentication_classes([])
 @permission_classes([])
-def update_product(request , id):
+def update_product(request, id):
     try:
+        # Get the existing product instance
         instance_product = Product.objects.get(id=id)
-        product_form = ProductForm(request.POST , request.FILES , instance=instance_product)
+
+        # Update product fields
+        product_form = ProductForm(request.POST, request.FILES, instance=instance_product)
         if product_form.is_valid():
             product_form.save()
 
+            # Update product images if provided
             if 'images' in request.FILES:
                 product_images = request.FILES.getlist('images')
                 for image in product_images:
-                    product_image_form = ProductImagesForm({'product' : instance_product.id} , {'image' :image})
+                    product_image_form = ProductImagesForm({'product': instance_product.id}, {'image': image})
                     if product_image_form.is_valid():
                         product_image = product_image_form.save(commit=False)
-                        product_image.product = instance_product
+                        product_image.product = instance_product  # Associate with the existing product
                         product_image.save()
                     else:
                         print("Error with image form:", product_image_form.errors)
                         return JsonResponse({'errors': product_image_form.errors}, status=400)
-                return JsonResponse({"success":True,"message":"Product updated successfully"})
-            else:
-                return JsonResponse({'error':product_form.errors.as_json()},status = 400)
+
+            # Process variations if provided
+            variations = request.data.get('variations', '[]')
+
+            # Parse variations as JSON if it's a string
+            if isinstance(variations, str):
+                try:
+                    variations = json.loads(variations)
+                except json.JSONDecodeError:
+                    return JsonResponse({'errors': 'Invalid JSON format for variations.'}, status=400)
+
+            # Clear existing variations (optional)
+            instance_product.product_variation.all().delete()
+
+            # Add new variations
+            for variation_data in variations:
+                variation_category = variation_data.get('variation_category')
+                variation_value = variation_data.get('variation_value')
+
+                # Ensure both category and value are provided
+                if not variation_category or not variation_value:
+                    return JsonResponse(
+                        {'errors': 'Both variation_category and variation_value are required.'},
+                        status=400
+                    )
+
+                # Create and associate the Variation instance with the Product
+                Variation.objects.create(
+                    product=instance_product,
+                    variation_category=variation_category,
+                    variation_value=variation_value
+                )
+
+            return JsonResponse({"success": True, "message": "Product updated successfully"})
+
+        else:
+            return JsonResponse({'errors': product_form.errors}, status=400)
+
     except Product.DoesNotExist:
-        return JsonResponse({"error":"Property not found or you are not authorized to edit it"},status=404)
+        return JsonResponse({"error": "Product not found or you are not authorized to edit it"}, status=404)
 
 
 # Delete Product View
