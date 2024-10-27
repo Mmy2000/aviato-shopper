@@ -51,6 +51,34 @@ def create_product(request):
     else:
         print("error",product_form.errors,product_form.non_field_errors)
         return JsonResponse({'errors':product_form.errors.as_json()},status=400)
+    
+@api_view(["PUT"]) 
+@authentication_classes([])
+@permission_classes([])
+def update_product(request , id):
+    try:
+        instance_product = Product.objects.get(id=id)
+        product_form = ProductForm(request.POST , request.FILES , instance=instance_product)
+        if product_form.is_valid():
+            product_form.save()
+
+            if 'images' in request.FILES:
+                product_images = request.FILES.getlist('images')
+                for image in product_images:
+                    product_image_form = ProductImagesForm({'product' : instance_product.id} , {'image' :image})
+                    if product_image_form.is_valid():
+                        product_image = product_image_form.save(commit=False)
+                        product_image.product = instance_product
+                        product_image.save()
+                    else:
+                        print("Error with image form:", product_image_form.errors)
+                        return JsonResponse({'errors': product_image_form.errors}, status=400)
+                return JsonResponse({"success":True,"message":"Product updated successfully"})
+            else:
+                return JsonResponse({'error':product_form.errors.as_json()},status = 400)
+    except Product.DoesNotExist:
+        return JsonResponse({"error":"Property not found or you are not authorized to edit it"},status=404)
+
 
 # Delete Product View
 
