@@ -17,6 +17,8 @@ from rest_framework.decorators import (
     permission_classes,
 )
 import json
+from rest_framework.permissions import IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ProductListApi(generics.ListAPIView):
@@ -30,8 +32,8 @@ class ProductDetailApi(generics.RetrieveAPIView):
 # Create and Update Product View
 
 @api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def create_product(request):
     # Process product form
     product_form = ProductForm(request.POST, request.FILES)
@@ -90,8 +92,8 @@ def create_product(request):
 
     
 @api_view(["PUT"])
-@authentication_classes([])
-@permission_classes([])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def update_product(request, id):
     try:
         # Get the existing product instance
@@ -102,8 +104,12 @@ def update_product(request, id):
         if product_form.is_valid():
             product_form.save()
 
-            # Update product images if provided
+            # Check if new images are provided
             if 'images' in request.FILES:
+                # Delete existing images associated with the product
+                instance_product.images.all().delete()
+
+                # Add the new images
                 product_images = request.FILES.getlist('images')
                 for image in product_images:
                     product_image_form = ProductImagesForm({'product': instance_product.id}, {'image': image})
