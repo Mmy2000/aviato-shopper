@@ -165,6 +165,8 @@ def update_product(request, id):
 # Delete Product View
 
 class ProductDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]  # Use JWT authentication
+    permission_classes = [IsAdminUser]
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         product.delete()
