@@ -7,7 +7,7 @@ from accounts.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id','first_name','last_name','username','full_name']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,7 +44,14 @@ class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = ReviewRating
-        fields = '__all__'
+        fields = ['id', 'user', 'product', 'subject', 'review', 'rating', 'ip', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Rating must be between 1 and 5.")
+        return value
+
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:

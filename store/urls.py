@@ -1,12 +1,13 @@
 from django.urls import path,include
 
 from . import views
-from .api_view import AllProductImagesView, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi,create_product,update_product,ProductDeleteView,ProductDetailApi,CategoryViewSet,SubCategoryViewSet
+from .api_view import AllProductImagesView, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi,create_product,update_product,ProductDeleteView,ProductDetailApi,CategoryViewSet,SubCategoryViewSet,ReviewRatingViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'api/categories', CategoryViewSet)
 router.register(r'api/subcategories', SubCategoryViewSet)
+router.register(r'api/reviews', ReviewRatingViewSet, basename='review')
 
 urlpatterns = [
     path('' , views.product_list , name='product_list'),

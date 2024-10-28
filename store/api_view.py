@@ -1,15 +1,14 @@
 from django.http import JsonResponse
-
 from category.models import Category, Subcategory
-from store.permissions import IsSuperAdmin
-from .serializers import   CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer
-from .models import Product , ProductImage, Variation
+from store.permissions import IsSuperAdmin , IsOwnerOrSuperuser
+from .serializers import   CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer  , ReviewSerializer
+from .models import Product , ProductImage, Variation , ReviewRating
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets , permissions
 from .forms import ProductForm , ProductImagesForm
 from rest_framework.decorators import (
     api_view,
@@ -19,7 +18,7 @@ from rest_framework.decorators import (
 import json
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.exceptions import PermissionDenied
 
 class ProductListApi(generics.ListAPIView):
     serializer_class = ProductSerializer
@@ -90,7 +89,6 @@ def create_product(request):
         return JsonResponse({'errors': product_form.errors}, status=400)
 
 
-    
 @api_view(["PUT"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAdminUser])
@@ -172,6 +170,7 @@ class ProductDeleteView(APIView):
         product.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
 
+# Create Images
 class ProductImageCreateView(APIView):
     def post(self, request, product_id):
         product = Product.objects.get(id=product_id)
@@ -189,12 +188,14 @@ class ProductImageCreateView(APIView):
 
         return Response(ProductImageSerializer(image_objects, many=True).data, status=status.HTTP_201_CREATED)
 
+# List Images
 class ProductImageListView(APIView):
     def get(self, request, product_id):
         product_images = ProductImage.objects.filter(product__id=product_id)
         serializer = ProductImageSerializer(product_images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+# Update Images    
 class ProductImageUpdateView(APIView):
     def put(self, request, product_id, image_id):
         try:
@@ -210,6 +211,7 @@ class ProductImageUpdateView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+# Delete Images    
 class ProductImageDeleteView(APIView):
     def delete(self, request, product_id, image_id):
         try:
@@ -219,17 +221,58 @@ class ProductImageDeleteView(APIView):
             return Response({"detail": "Image deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
         except ProductImage.DoesNotExist:
             return Response({"detail": "Image not found."}, status=status.HTTP_404_NOT_FOUND)
-        
+
+# List all images        
 class AllProductImagesView(generics.ListAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = SampleProductImageSerializer
 
+# Category endpoints
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsSuperAdmin]  # Apply custom permission
 
+# Subcategories endpoints
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = Subcategory.objects.all()
     serializer_class = SubCategorySerializer
     permission_classes = [IsSuperAdmin]  # Apply custom permission
+
+# Review endpoints
+class ReviewRatingViewSet(viewsets.ModelViewSet):
+    queryset = ReviewRating.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Automatically set the user field
+        serializer.save(user=self.request.user, ip=self.get_client_ip())
+
+    def perform_update(self, serializer):
+        # Ensure the review can only be updated by the user who created it
+        if serializer.instance.user != self.request.user:
+            raise PermissionDenied("You cannot edit someone else's review.")
+        serializer.save()
+    
+    def get_permissions(self):
+        # Use custom permission for delete action
+        if self.action == 'destroy':
+            self.permission_classes = [permissions.IsAuthenticated, IsOwnerOrSuperuser]
+        return super().get_permissions()
+
+    def destroy(self, request, *args, **kwargs):
+        # Overriding destroy method to enforce the permission check
+        instance = self.get_object()
+        self.check_object_permissions(request, instance)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_client_ip(self):
+        # Get client IP address from the request
+        x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = self.request.META.get('REMOTE_ADDR')
+        return ip
