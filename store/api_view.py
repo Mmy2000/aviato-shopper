@@ -19,10 +19,15 @@ import json
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import PermissionDenied
+from .filters import ProductFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class ProductListApi(generics.ListAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
 class ProductDetailApi(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
@@ -287,3 +292,4 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
         else:
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
+    
