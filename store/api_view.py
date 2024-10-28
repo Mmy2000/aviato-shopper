@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from category.models import Category, Subcategory
-from store.permissions import IsSuperAdmin , IsOwnerOrSuperuser
-from .serializers import   CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer  , ReviewSerializer
-from .models import Product , ProductImage, Variation , ReviewRating
+from store.permissions import IsSuperAdmin , IsOwnerOrSuperuser ,IsSuperUserOrReadOnly
+from .serializers import   BrandSerializer, CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer  , ReviewSerializer
+from .models import Brand, Product , ProductImage, Variation , ReviewRating
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -227,17 +227,28 @@ class AllProductImagesView(generics.ListAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = SampleProductImageSerializer
 
-# Category endpoints
+# Category endpoints for dashboard
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsSuperAdmin]  # Apply custom permission
 
-# Subcategories endpoints
+# Subcategories endpoints for dashboard
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = Subcategory.objects.all()
     serializer_class = SubCategorySerializer
     permission_classes = [IsSuperAdmin]  # Apply custom permission
+
+# Brands endpoints for dashboard
+class BrandViewSet(viewsets.ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+
+    def get_permissions(self):
+        if self.action == 'list':
+            # No authentication needed for listing
+            return [permissions.AllowAny()]
+        return [IsSuperUserOrReadOnly()]
 
 # Review endpoints
 class ReviewRatingViewSet(viewsets.ModelViewSet):

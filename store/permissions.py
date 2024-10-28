@@ -21,3 +21,22 @@ class IsOwnerOrSuperuser(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Allow delete if the user is the owner of the review or is a superuser
         return obj.user == request.user or request.user.is_superadmin
+    
+class IsSuperUserOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow superusers to create, update, or delete objects.
+    """
+    def has_permission(self, request, view):
+        # Allow listing without authentication
+        if view.action == 'list':
+            return True
+        
+        # Allow create, update, or delete for superusers only
+        return request.user and request.user.is_superadmin
+
+    def has_object_permission(self, request, view, obj):
+        # Allow safe methods (GET, HEAD, OPTIONS) or superuser actions
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return request.user and request.user.is_superadmin
