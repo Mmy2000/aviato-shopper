@@ -231,13 +231,21 @@ class AllProductImagesView(generics.ListAPIView):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsSuperAdmin]  # Apply custom permission
+    def get_permissions(self):
+        if self.action == 'list':
+            # No authentication needed for listing
+            return [permissions.AllowAny()]
+        return [IsSuperUserOrReadOnly()]
 
 # Subcategories endpoints for dashboard
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = Subcategory.objects.all()
     serializer_class = SubCategorySerializer
-    permission_classes = [IsSuperAdmin]  # Apply custom permission
+    def get_permissions(self):
+        if self.action == 'list':
+            # No authentication needed for listing
+            return [permissions.AllowAny()]
+        return [IsSuperUserOrReadOnly()]  
 
 # Brands endpoints for dashboard
 class BrandViewSet(viewsets.ModelViewSet):
