@@ -72,11 +72,19 @@ AUTHENTICATION_BACKENDS = (
 )
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # For React or other front-end dev servers
+    'http://localhost:5173',  # For React or other front-end dev servers
     'http://127.0.0.1:8000',  # Django local development server
 ]
 
+from corsheaders.defaults import default_headers
 
+# Allow specific headers, including your custom 'token' header
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "token",  # Add any other custom headers you might need
+]
+
+# Allow credentials if using authentication
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be placed at the top
