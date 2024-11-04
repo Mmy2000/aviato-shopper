@@ -65,9 +65,25 @@ class ProductSerializer(serializers.ModelSerializer):
     variations = VariationSerializer(source='product_variation', many=True, read_only=True)
     reviewrating = ReviewSerializer(many=True, read_only=True)
     
+    # New fields for color and size variations
+    color_variations = serializers.SerializerMethodField()
+    size_variations = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
-        fields = ['id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 'category','PRDBrand','variations', 'images','reviewrating', 'avr_review', 'count_review']
+        fields = [
+            'id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 
+            'category', 'PRDBrand', 'variations', 'images', 'reviewrating', 
+            'avr_review', 'count_review', 'color_variations', 'size_variations'
+        ]
+
+    def get_color_variations(self, obj):
+        color_variations = obj.product_variation.filter(variation_category='color', is_active=True)
+        return VariationSerializer(color_variations, many=True).data
+
+    def get_size_variations(self, obj):
+        size_variations = obj.product_variation.filter(variation_category='size', is_active=True)
+        return VariationSerializer(size_variations, many=True).data
 
 
 class SampleProductImageSerializer(serializers.ModelSerializer):
