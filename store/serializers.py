@@ -1,13 +1,21 @@
 from rest_framework import serializers
 from .models import Product, ProductImage, Brand , Variation,ReviewRating
 from category.models import Category , Subcategory
-from accounts.models import User
+from accounts.models import User , Profile
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['image', 'about', 'country', 'address_line_1', 'address_line_2', 'headline', 'city', 'full_address']
+        read_only_fields = ['full_address']  # Makes `full_address` a read-only field
 
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)  # Nested serializer
+
     class Meta:
         model = User
-        fields = ['id','first_name','last_name','username','full_name']
+        fields = ['id', 'first_name', 'last_name', 'username', 'full_name', 'profile']
+        read_only_fields = ['full_name']  # Makes `full_name` a read-only field
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

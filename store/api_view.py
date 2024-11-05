@@ -261,8 +261,26 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        # Check if the user has already reviewed this product
+        product_id = request.data.get("product")
+        review = ReviewRating.objects.filter(user=request.user, product_id=product_id).first()
+        
+        if review:
+            # If the review exists, update it
+            serializer = self.get_serializer(review, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        else:
+            # Otherwise, create a new review
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     def perform_create(self, serializer):
-        # Automatically set the user field
+        # Automatically set the user field and IP address
         serializer.save(user=self.request.user, ip=self.get_client_ip())
 
     def perform_update(self, serializer):
@@ -270,7 +288,7 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
         if serializer.instance.user != self.request.user:
             raise PermissionDenied("You cannot edit someone else's review.")
         serializer.save()
-    
+
     def get_permissions(self):
         # Use custom permission for delete action
         if self.action == 'destroy':
@@ -292,4 +310,3 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
         else:
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
-    
