@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from order.models import OrderProduct
 from .models import Product, ProductImage, Brand , Variation,ReviewRating
 from category.models import Category , Subcategory
 from accounts.models import User , Profile
@@ -92,7 +94,8 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_size_variations(self, obj):
         size_variations = obj.product_variation.filter(variation_category='size', is_active=True)
         return VariationSerializer(size_variations, many=True).data
-
+    
+    
 
 class SampleProductImageSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)

@@ -29,9 +29,12 @@ class ProductListApi(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
 
+
 class ProductDetailApi(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+
+
 
 # Create and Update Product View
 

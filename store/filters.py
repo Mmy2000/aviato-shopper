@@ -4,8 +4,8 @@ from rest_framework import generics
 from .models import Product, Variation
 
 class ProductFilter(filters.FilterSet):
-    category = filters.CharFilter(field_name="category__category__name", lookup_expr='iexact')
-    subcategory = filters.CharFilter(field_name="category__name", lookup_expr='iexact')
+    category = filters.CharFilter(field_name="category__category__id", lookup_expr='iexact')
+    subcategory = filters.CharFilter(field_name="category__id", lookup_expr='iexact')
     brand = filters.CharFilter(field_name="PRDBrand__name", lookup_expr='iexact')
     variation = filters.CharFilter(method='filter_variation')
     min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
