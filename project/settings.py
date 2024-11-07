@@ -75,8 +75,9 @@ AUTHENTICATION_BACKENDS = (
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # For React or other front-end dev servers
     'http://127.0.0.1:8000',  # Django local development server
+    'https://aviato-react.vercel.app'
 ]
-
+ALLOW_ALL_ORIGINS=True
 from corsheaders.defaults import default_headers
 
 # Allow specific headers, including your custom 'token' header

@@ -79,6 +79,7 @@ class ProductSerializer(serializers.ModelSerializer):
     color_variations = serializers.SerializerMethodField()
     size_variations = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Product
         fields = [
@@ -94,6 +95,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_size_variations(self, obj):
         size_variations = obj.product_variation.filter(variation_category='size', is_active=True)
         return VariationSerializer(size_variations, many=True).data
+    
     
     
 

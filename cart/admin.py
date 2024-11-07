@@ -11,7 +11,7 @@ class CartItemInline(admin.TabularInline):
 
 # Custom admin for Cart model
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('cart_id', 'date_added', 'total_items', 'cart_total')  # Show total items and cart total
+    list_display = ('id','cart_id', 'date_added', 'total_items', 'cart_total')  # Show total items and cart total
     search_fields = ('cart_id',)
     readonly_fields = ('date_added', 'cart_total')  # Makes date_added and cart_total read-only
     inlines = [CartItemInline]
@@ -32,7 +32,7 @@ class CartAdmin(admin.ModelAdmin):
 
 # Custom admin for CartItem model
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'cart', 'quantity', 'is_active', 'sub_total', 'variations_display')  # Display variations
+    list_display = ('id','product', 'cart', 'quantity', 'is_active', 'sub_total', 'variations_display')  # Display variations
     search_fields = ('product__name', 'cart__cart_id')  # Search by product name and cart ID
     list_filter = ('is_active', 'cart')  # Filters for is_active and cart
     readonly_fields = ('sub_total', 'variations_display')  # Make sub_total and variations read-only

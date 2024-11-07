@@ -84,7 +84,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 # Admin class for Variation
 @admin.register(Variation)
 class VariationAdmin(admin.ModelAdmin):
-    list_display = ('product', 'variation_category', 'variation_value', 'is_active')
+    list_display = ('id','product', 'variation_category', 'variation_value', 'is_active')
     list_editable = ('is_active',)
     list_filter = ('variation_category', 'is_active')
     search_fields = ('product__name', 'variation_value')

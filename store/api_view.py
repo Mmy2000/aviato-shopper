@@ -34,7 +34,12 @@ class ProductDetailApi(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
 
-
+class RecentProductListView(APIView):
+    def get(self, request):
+        # Fetch the latest 4 products by ordering with '-created_at'
+        recent_products = Product.objects.all().order_by('-created_at')[:4]
+        serializer = ProductSerializer(recent_products, many=True,context={'request':request})
+        return Response(serializer.data)
 
 # Create and Update Product View
 
