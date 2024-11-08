@@ -21,18 +21,26 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import PermissionDenied
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 
 class ProductListApi(generics.ListAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend,SearchFilter]
     filterset_class = ProductFilter
+    search_fields = ['name', 'description', 'category__name','category__category__name', 'PRDBrand__name']
 
 
 class ProductDetailApi(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+
+class ProductSearchView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'description', 'category__name', 'PRDBrand__name']  # Adjust fields as needed
 
 class RecentProductListView(APIView):
     def get(self, request):
