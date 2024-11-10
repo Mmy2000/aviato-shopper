@@ -11,24 +11,42 @@ class CartItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return CartItem.objects.filter(user=self.request.user, is_active=True)
+        return CartItem.objects.filter(user=self.request.user, is_active=True, cart__cart_id=self.request.session.session_key)
+
 
     def get_full_cart_response(self, cart):
         """Helper method to return the full cart details."""
         serializer = CartSerializer(cart)
         return serializer.data
 
+    def list(self, request, *args, **kwargs):
+        """Retrieve all cart items with full cart details."""
+        # Get the Cart using the session key
+        cart = get_object_or_404(Cart, cart_id=request.session.session_key)
+        
+        # Check if there are any active CartItems for the current user in this cart
+        cart_items = CartItem.objects.filter(cart=cart, user=request.user, is_active=True)
+        if not cart_items.exists():
+            return Response({"detail": "No active items in cart."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Return the full cart details
+        return Response(self.get_full_cart_response(cart), status=status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         data = request.data
-        product = get_object_or_404(Product, id=data['product_id'])
-        cart, _ = Cart.objects.get_or_create(cart_id=request.session.session_key)
+        product = get_object_or_404(Product, id=data['productId'])
+        cart, _ = Cart.objects.get_or_create(cart_id=request.session.session_key, user=request.user, is_active=True)
 
-        # Retrieve variations if provided
-        variation_ids = data.get('variations', [])
-        if variation_ids:
-            variations = Variation.objects.filter(id__in=variation_ids)
-        else:
-            variations = []
+        # Filter variations by category and value if provided
+        variations = []
+        if 'size' in data:
+            variations += Variation.objects.filter(
+                product=product, variation_category="size", variation_value=data['size']
+            )
+        if 'color' in data:
+            variations += Variation.objects.filter(
+                product=product, variation_category="color", variation_value=data['color']
+            )
 
         # Check for an existing cart item with the same product and variations
         existing_cart_items = CartItem.objects.filter(user=request.user, product=product, cart=cart)
@@ -69,7 +87,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         """Retrieve the full cart details."""
-        cart = get_object_or_404(Cart, cart_id=request.session.session_key)
+        cart = get_object_or_404(Cart, cart_id=request.session.session_key, user=request.user, is_active=True)
         return Response(self.get_full_cart_response(cart), status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):

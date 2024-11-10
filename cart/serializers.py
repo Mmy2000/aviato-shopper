@@ -48,7 +48,12 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(source='cartitem_set', many=True, read_only=True)
+    total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Cart
-        fields = ['id', 'cart_id', 'date_added', 'cart_items']
+        fields = ['id', 'cart_id', 'date_added', 'cart_items', 'total_price']
+
+    def get_total_price(self, obj):
+        # Calculate the sum of the total prices for all active cart items in the cart
+        return sum(item.sub_total() for item in obj.cartitem_set.filter(is_active=True))
