@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .api_view import PlaceOrderView
+from .api_view import PlaceOrderView,CashOrderView
 urlpatterns = [
     path('place_order/' , views.place_order , name='place_order' ),
     path('cash-order/', views.cash_order, name='cash_order'),
@@ -12,4 +12,5 @@ urlpatterns = [
     # API
 
     path('place_order_api/', PlaceOrderView.as_view(), name='place_order_api'),
+    path('cash-order_api/', CashOrderView.as_view(), name='cash_order_api'),
 ]
