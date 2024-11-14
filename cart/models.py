@@ -11,14 +11,18 @@ class Cart(models.Model):
     date_added = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return self.cart_id
+        return str(self.cart_id)
 
 
 class Tax(models.Model):
-    tax = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal('0.00'))
+    tax = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal('0.00'))  # Representing tax as a percentage
 
     def __str__(self):
-        return str(self.tax)
+        return f"{self.tax}%"
+
+    def calculate_tax(self, amount):
+        """Calculate tax based on the provided amount."""
+        return (self.tax / Decimal('100')) * amount
 
 class CartItem(models.Model):
     user = models.ForeignKey(User,null=True,verbose_name="user cart", on_delete=models.CASCADE)
