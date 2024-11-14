@@ -53,7 +53,6 @@ class PlaceOrderView(APIView):
                 'cart_items': [{"product_name": item.product.name, "quantity": item.quantity, "price": item.product.price} for item in cart_items],
                 'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
             }
-            if order.payment_method == "cash":
-                return redirect('cash_order')  # Modify this if you want an API response
+
             return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
