@@ -66,83 +66,16 @@ class PlaceOrderView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class CashOrderView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     def post(self, request):
-#         current_user = request.user
-
-#         # Get the order that was just created
-#         order = Order.objects.filter(user=current_user, is_orderd=False).last()
-
-#         if not order:
-#             return Response({"error": "No order found."}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Create a payment object for cash payment
-#         payment = Payment(
-#             user=current_user,
-#             payment_id=f"cash_{order.order_number}",
-#             payment_method="cash",
-#             payment_paid=False,  # Cash payment is considered as paid
-#             status="On Delivery",  # Set status to On Delivery
-#         )
-#         payment.save()
-
-#         # Update the order with the payment information
-#         order.payment = payment
-#         order.is_orderd = True
-#         order.status = "On Delivery"
-#         order.save()
-
-#         # Move all cart items to OrderProduct table and reduce stock
-#         cart_items = CartItem.objects.filter(user=current_user)
-
-#         for item in cart_items:
-#             order_product = OrderProduct(
-#                 order=order,
-#                 payment=payment,
-#                 user=current_user,
-#                 product=item.product,
-#                 quantity=item.quantity,
-#                 product_price=item.product.price,
-#                 ordered=True
-#             )
-#             order_product.save()
-#             order_product.variations.set(item.variations.all())
-#             order_product.save()
-
-#             # Reduce the stock of the product
-#             product = item.product
-#             product.stock -= item.quantity
-#             product.save()
-
-#         # Clear the user's cart after the order is placed
-#         cart_items.delete()
-
-#         # Send order received email to customer
-#         # try:
-#         #     mail_subject = 'Thank you for your order!'
-#         #     message = render_to_string('order_recieved_email.html', {
-#         #         'user': request.user,
-#         #         'order': order,
-#         #     })
-#         #     send_mail(mail_subject, message, 'from@example.com', [request.user.email])
-#         # except Exception as e:
-#         #     return Response({"error": f"Failed to send email: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-#         return Response({
-#             "message": "Thank you! Your order has been successfully placed.",
-#             "order": OrderSerializer(order).data,
-#             "payment": PaymentSerializer(payment).data
-#         }, status=status.HTTP_201_CREATED)
-
 class CashOrderView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        print("before try block")
         try:
             current_user = request.user
             # Attempt to get the latest order for the user that hasn't been ordered
             order = Order.objects.filter(user=current_user, is_orderd=False).last()
+            print(f"after current user {current_user}")
             
             if not order:
                 logger.error("No order found for user %s", current_user)
@@ -158,6 +91,7 @@ class CashOrderView(APIView):
                     status="On Delivery",  # Set status to On Delivery
                 )
                 payment.save()
+                print(f"payment user : {payment.user}")
             except Exception as e:
                 logger.error("Failed to create payment: %s", e)
                 return Response({"error": "Failed to create payment."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -191,6 +125,7 @@ class CashOrderView(APIView):
                     order_product.save()
                     order_product.variations.set(item.variations.all())
                     order_product.save()
+                    print(f"order product user : {order_product.user}")
 
                     # Reduce the stock of the product
                     product = item.product
@@ -208,16 +143,17 @@ class CashOrderView(APIView):
                 return Response({"error": "Failed to process cart items."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             # Optional: Send order received email to customer
-            # try:
-            #     mail_subject = 'Thank you for your order!'
-            #     message = render_to_string('order_recieved_email.html', {
-            #         'user': request.user,
-            #         'order': order,
-            #     })
-            #     send_mail(mail_subject, message, 'from@example.com', [request.user.email])
-            # except Exception as e:
-            #     logger.error("Failed to send email: %s", e)
-            #     return Response({"error": f"Failed to send email: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                mail_subject = 'Thank you for your order!'
+                message = render_to_string('order_recieved_email.html', {
+                    'user': request.user,
+                    'order': order,
+                })
+                email_from = settings.EMAIL_HOST_USER
+                send_mail(mail_subject, message, email_from, [request.user.email])
+            except Exception as e:
+                logger.error("Failed to send email: %s", e)
+                return Response({"error": f"Failed to send email: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response({
                 "message": "Thank you! Your order has been successfully placed.",
