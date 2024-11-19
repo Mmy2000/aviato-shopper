@@ -1,7 +1,7 @@
 from django.urls import path,include
 
 from . import views
-from .api_view import AllProductImagesView, BrandViewSet, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi, RecentProductListView,create_product,update_product,ProductDeleteView,ProductDetailApi,CategoryViewSet,SubCategoryViewSet,ReviewRatingViewSet
+from .api_view import AllProductImagesView, BrandViewSet, ProductImageCreateView, ProductImageDeleteView, ProductImageListView, ProductImageUpdateView, ProductListApi, RecentProductListView, ToggleFavoriteView,create_product,update_product,ProductDeleteView,ProductDetailApi,CategoryViewSet,SubCategoryViewSet,ReviewRatingViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -27,6 +27,8 @@ urlpatterns = [
     path('api/product/create/', create_product, name='product-create'),  # POST for create
     path('api/product/update/<uuid:id>/', update_product , name='product-update'),  # PUT for update
     path('api/product/delete/<uuid:pk>/', ProductDeleteView.as_view(), name='product-delete'),  # DELETE for delete
+    path('api/product/<uuid:pk>/favorite/', ToggleFavoriteView.as_view(), name='toggle-favorite'),
+
 
     path('api/product/images/all/', AllProductImagesView.as_view(), name='all-product-images'),
     path('api/product/<uuid:product_id>/create/', ProductImageCreateView.as_view(), name='product-image-create'),  # POST: Add image to product

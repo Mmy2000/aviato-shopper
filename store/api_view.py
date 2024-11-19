@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from category.models import Category, Subcategory
 from store.permissions import IsSuperAdmin , IsOwnerOrSuperuser ,IsSuperUserOrReadOnly
-from .serializers import   BrandSerializer, CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer  , ReviewSerializer
+from .serializers import   BrandSerializer, CategorySerializer, ProductSerializer , ProductImageSerializer, SampleProductImageSerializer, SubCategorySerializer  , ReviewSerializer, ToggleFavoriteSerializer
 from .models import Brand, Product , ProductImage, Variation , ReviewRating
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -22,6 +22,7 @@ from rest_framework.exceptions import PermissionDenied
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 
 
 class ProductListApi(generics.ListAPIView):
@@ -326,3 +327,22 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
         else:
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
+
+class ToggleFavoriteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        # Get the product by ID
+        product = get_object_or_404(Product, pk=pk)
+
+        # Toggle the favorite status
+        if product.like.filter(id=request.user.id).exists():
+            product.like.remove(request.user)
+            is_favorite = False
+        else:
+            product.like.add(request.user)
+            is_favorite = True
+
+        # Serialize and return the response
+        serializer = ToggleFavoriteSerializer({"is_favorite": is_favorite})
+        return Response(serializer.data)

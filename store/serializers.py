@@ -105,3 +105,5 @@ class SampleProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = ['id', 'image','product']
 
+class ToggleFavoriteSerializer(serializers.Serializer):
+    is_favorite = serializers.BooleanField()
