@@ -22,7 +22,7 @@ from rest_framework.exceptions import PermissionDenied
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 
 class ProductListApi(generics.ListAPIView):
@@ -31,6 +31,48 @@ class ProductListApi(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend,SearchFilter]
     filterset_class = ProductFilter
     search_fields = ['name', 'description', 'category__name','category__category__name', 'PRDBrand__name']
+
+    def get_permissions(self):
+        """
+        Allow public access by default, but require authentication for 'is_favorites' filtering.
+        """
+        if self.request.query_params.get('is_favorites'):
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def get_queryset(self):
+        """
+        Dynamically filter products based on query parameters.
+        """
+        queryset = Product.objects.all()
+        is_favorites = self.request.query_params.get('is_favorites', None)
+
+        if is_favorites:
+            user = self.request.user
+            if not user.is_authenticated:
+                # If 'is_favorites' is requested but user is not authenticated, raise an exception.
+                from rest_framework.exceptions import AuthenticationFailed
+                raise AuthenticationFailed("Authentication is required to filter favorites.")
+            queryset = queryset.filter(like=user)
+        
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        """
+        Add additional metadata for favorited products.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+
+        # Include only IDs of favorited products if authenticated
+        favorites = []
+        if request.user.is_authenticated:
+            favorites = queryset.values_list('id', flat=True)
+
+        return Response({
+            "data": serializer.data,
+            "favorites": list(favorites),  # Return as a list of IDs
+        })
 
 
 class ProductDetailApi(generics.RetrieveAPIView):

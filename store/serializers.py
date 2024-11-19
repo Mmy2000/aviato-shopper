@@ -79,13 +79,15 @@ class ProductSerializer(serializers.ModelSerializer):
     color_variations = serializers.SerializerMethodField()
     size_variations = serializers.SerializerMethodField()
 
+    is_favorite = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Product
         fields = [
             'id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 
             'category', 'PRDBrand', 'variations', 'images', 'reviewrating', 
-            'avr_review', 'count_review', 'color_variations', 'size_variations'
+            'avr_review', 'count_review', 'color_variations', 'size_variations','is_favorite'
         ]
 
     def get_color_variations(self, obj):
@@ -95,6 +97,13 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_size_variations(self, obj):
         size_variations = obj.product_variation.filter(variation_category='size', is_active=True)
         return VariationSerializer(size_variations, many=True).data
+    
+    def get_is_favorite(self, obj):
+        # Check if the logged-in user has the product in their favorites
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.like.filter(id=request.user.id).exists()
+        return False
     
     
     
