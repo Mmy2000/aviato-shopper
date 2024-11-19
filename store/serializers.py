@@ -106,8 +106,6 @@ class ProductSerializer(serializers.ModelSerializer):
         return False
     
     
-    
-
 class SampleProductImageSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
     class Meta:

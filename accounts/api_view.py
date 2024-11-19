@@ -1,10 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from store.models import Product
+from store.serializers import ProductSerializer
 from .serializers import RegisterSerializer, LoginSerializer , ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from . models import Profile
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterView(APIView):
@@ -86,3 +90,12 @@ class ProfileDetailUpdateView(generics.RetrieveUpdateAPIView):
             },
             status=status.HTTP_200_OK
         )
+    
+class FavoriteProductsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        products = Product.objects.filter(like=user)  # Assuming 'like' is a ManyToManyField
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
