@@ -22,4 +22,6 @@ urlpatterns = [
     path('api/login/', api_view.LoginView.as_view(), name='login-api'),
     path('api/profile/', api_view.ProfileDetailUpdateView.as_view(), name='profile-detail-update-api'),
     path('api/favorites/', api_view.FavoriteProductsView.as_view(), name='favorite-products'),
+    path('api/orders/', api_view.UserOrdersView.as_view(), name='user-orders'),
+    path('api/orders/<int:order_id>/', api_view.OrderDetailView.as_view(), name='order-detail'),
 ]

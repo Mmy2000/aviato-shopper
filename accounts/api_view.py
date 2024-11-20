@@ -2,9 +2,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from order.models import Order
 from store.models import Product
 from store.serializers import ProductSerializer
-from .serializers import RegisterSerializer, LoginSerializer , ProfileSerializer
+from .serializers import OrderSerializer, RegisterSerializer, LoginSerializer , ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from . models import Profile
@@ -97,5 +98,27 @@ class FavoriteProductsView(APIView):
     def get(self, request):
         user = request.user
         products = Product.objects.filter(like=user)  # Assuming 'like' is a ManyToManyField
-        serializer = ProductSerializer(products, many=True)
+        serializer = ProductSerializer(products, many=True,context={'request':request})
         return Response(serializer.data)
+    
+class UserOrdersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+        serializer = OrderSerializer(user_orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class OrderDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, order_id):
+        try:
+            order = Order.objects.get(user=request.user, id=order_id)
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            return Response(
+                {"error": "Order not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )

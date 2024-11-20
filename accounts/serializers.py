@@ -1,6 +1,10 @@
 import random
 import string
 from rest_framework import serializers
+
+from order.models import Order, OrderProduct, Payment
+from store.models import Product, Variation
+from store.serializers import VariationSerializer
 from .models import User , Profile
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
@@ -92,3 +96,40 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         # Update profile fields
         return super().update(instance, validated_data)
+    
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'image']  # Adjust fields as per your `Product` model
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['payment_id', 'payment_method', 'payment_paid', 'status', 'created_at']
+        
+class OrderProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    variations = VariationSerializer(many=True)
+
+    class Meta:
+        model = OrderProduct
+        fields = ['id', 'product', 'variations', 'quantity', 'product_price', 'ordered']
+        
+
+class OrderSerializer(serializers.ModelSerializer):
+    order_products = serializers.SerializerMethodField()
+    payment_details = PaymentSerializer(source='payment', read_only=True)
+
+    class Meta:
+        model = Order
+        fields = [
+            'id', 'order_number', 'status', 'order_total', 'tax', 'created_at',
+            'updated_at', 'is_orderd', 'full_name', 'full_address', 'order_products',
+            'payment_details'
+        ]
+
+    def get_order_products(self, obj):
+        order_products = OrderProduct.objects.filter(order=obj)
+        return OrderProductSerializer(order_products, many=True).data
