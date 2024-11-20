@@ -71,12 +71,13 @@ SIMPLE_JWT = {
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
+CSRF_TRUSTED_ORIGINS = ['https://aviato-bxanhbe7bahha5ff.westeurope-01.azurewebsites.net']
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # For React or other front-end dev servers
     'http://127.0.0.1:8000',  # Django local development server
     'https://aviato-react.vercel.app',
-    'https://aviato-bxanhbe7bahha5ff.westeurope-01.azurewebsites.net'
+    'https://aviato-bxanhbe7bahha5ff.westeurope-01.azurewebsites.net',
 ]
 ALLOW_ALL_ORIGINS=True
 from corsheaders.defaults import default_headers
