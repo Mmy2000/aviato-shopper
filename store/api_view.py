@@ -370,24 +370,6 @@ class ReviewRatingViewSet(viewsets.ModelViewSet):
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
 
-# class ToggleFavoriteView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, pk):
-#         # Get the product by ID
-#         product = get_object_or_404(Product, pk=pk)
-
-#         # Toggle the favorite status
-#         if product.like.filter(id=request.user.id).exists():
-#             product.like.remove(request.user)
-#             is_favorite = False
-#         else:
-#             product.like.add(request.user)
-#             is_favorite = True
-
-#         # Serialize and return the response
-#         serializer = ToggleFavoriteSerializer({"is_favorite": is_favorite})
-#         return Response(serializer.data)
 
 class ToggleFavoriteView(APIView):
     permission_classes = [IsAuthenticated]
@@ -409,7 +391,7 @@ class ToggleFavoriteView(APIView):
         count = favorite_products.count()
 
         # Serialize the favorite products
-        product_serializer = ProductSerializer(favorite_products, many=True)
+        product_serializer = ProductSerializer(favorite_products, many=True,context={'request':request})
 
         # Prepare the response
         response_data = {
