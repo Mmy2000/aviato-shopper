@@ -85,6 +85,7 @@ class Profile(models.Model):
     address_line_2 = models.CharField( max_length=50 , blank=True , null=True)
     headline = models.CharField(max_length=50 , blank=True, null=True)
     city = models.CharField(max_length=50 ,blank=True, null=True)
+    otp = models.IntegerField(null=True, blank=True)  # Store OTP here
 
     @property
     def full_name(self):

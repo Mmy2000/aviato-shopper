@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from order.models import Order
 from store.models import Product
 from store.serializers import ProductSerializer
-from .serializers import ChangePasswordSerializer, OrderSerializer, RegisterSerializer, LoginSerializer , ProfileSerializer
+from .serializers import ChangePasswordSerializer, OrderSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, RegisterSerializer, LoginSerializer , ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
 from . models import Profile
@@ -106,6 +106,22 @@ class ChangePasswordView(APIView):
             user.save()
             return Response({"message": "Password updated successfully."}, status=status.HTTP_200_OK)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "OTP sent to email"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Password has been reset successfully."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class FavoriteProductsView(APIView):

@@ -1,5 +1,6 @@
 import random
 import string
+from django.conf import settings
 from rest_framework import serializers
 
 from order.models import Order, OrderProduct, Payment
@@ -8,7 +9,8 @@ from store.serializers import VariationSerializer
 from .models import User , Profile
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-
+from django.core.mail import send_mail
+import random
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -143,3 +145,63 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError("New password and confirm password do not match.")
         return data
+    
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        try:
+            user = User.objects.get(email=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Email not found.")
+        return value
+    
+    def create_otp(self):
+        """Generate a 6-digit OTP."""
+        otp = random.randint(100000, 999999)
+        return otp
+    
+    def send_otp_email(self, email, otp):
+        """Send OTP to user's email."""
+        subject = "Password Reset OTP"
+        message = f"Your OTP for password reset is {otp}."
+        email_from = settings.EMAIL_HOST_USER
+        send_mail(subject, message, email_from, [email])
+    
+    def save(self):
+        email = self.validated_data['email']
+        otp = self.create_otp()
+        # Store OTP temporarily (e.g., in cache or in database)
+        user = User.objects.get(email=email)
+        # Store OTP in user's profile or elsewhere (e.g., cache or model)
+        user.profile.otp = otp  # assuming `Profile` has an `otp` field
+        user.profile.save()
+        
+        # Send OTP email
+        self.send_otp_email(email, otp)
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.IntegerField()
+    new_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate_otp(self, value):
+        """Validate the OTP"""
+        user = User.objects.get(email=self.initial_data['email'])
+        if user.profile.otp != value:
+            raise serializers.ValidationError("Invalid OTP")
+        return value
+    
+    def save(self):
+        email = self.validated_data['email']
+        new_password = self.validated_data['new_password']
+        
+        user = User.objects.get(email=email)
+        user.set_password(new_password)
+        user.save()
+        
+        # Clear OTP after successful reset
+        user.profile.otp = None
+        user.profile.save()
