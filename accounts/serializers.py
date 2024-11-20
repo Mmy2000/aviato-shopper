@@ -133,3 +133,13 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_order_products(self, obj):
         order_products = OrderProduct.objects.filter(order=obj)
         return OrderProductSerializer(order_products, many=True).data
+    
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("New password and confirm password do not match.")
+        return data
