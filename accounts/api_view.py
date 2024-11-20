@@ -106,7 +106,7 @@ class UserOrdersView(APIView):
 
     def get(self, request):
         user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
-        serializer = OrderSerializer(user_orders, many=True)
+        serializer = OrderSerializer(user_orders,context={'request':request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class OrderDetailView(APIView):
@@ -115,7 +115,7 @@ class OrderDetailView(APIView):
     def get(self, request, order_id):
         try:
             order = Order.objects.get(user=request.user, id=order_id)
-            serializer = OrderSerializer(order)
+            serializer = OrderSerializer(order,context={'request':request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Order.DoesNotExist:
             return Response(
