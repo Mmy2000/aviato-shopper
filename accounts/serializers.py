@@ -99,8 +99,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Update profile fields
         return super().update(instance, validated_data)
     
-
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -146,8 +144,6 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("New password and confirm password do not match.")
         return data
     
-
-
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
