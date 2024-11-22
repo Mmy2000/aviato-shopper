@@ -74,20 +74,21 @@ class ProductSerializer(serializers.ModelSerializer):
     PRDBrand = BrandSerializer(read_only=True)
     variations = VariationSerializer(source='product_variation', many=True, read_only=True)
     reviewrating = ReviewSerializer(many=True, read_only=True)
-    
+
     # New fields for color and size variations
     color_variations = serializers.SerializerMethodField()
     size_variations = serializers.SerializerMethodField()
-
+    
     is_favorite = serializers.SerializerMethodField()
-
+    is_in_orders = serializers.SerializerMethodField()  # New field to check orders
 
     class Meta:
         model = Product
         fields = [
             'id', 'name', 'image', 'price', 'description', 'slug', 'on_sale', 'like', 
             'category', 'PRDBrand', 'variations', 'images', 'reviewrating', 
-            'avr_review', 'count_review', 'color_variations', 'size_variations','is_favorite'
+            'avr_review', 'count_review', 'color_variations', 'size_variations', 
+            'is_favorite', 'is_in_orders'  # Include the new field
         ]
 
     def get_color_variations(self, obj):
@@ -104,6 +105,14 @@ class ProductSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.like.filter(id=request.user.id).exists()
         return False
+    
+    def get_is_in_orders(self, obj):
+        # Check if the product is in any orders for the logged-in user
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return OrderProduct.objects.filter(user=request.user, product=obj).exists()
+        return False
+
     
     
 class SampleProductImageSerializer(serializers.ModelSerializer):
