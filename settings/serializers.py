@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import ContactUs
+from .models import ContactUs, Newsletter
 
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +18,8 @@ class ContactUsSerializer(serializers.ModelSerializer):
                 "You have already submitted a message that is pending resolution."
             )
         return data
+    
+class NewsletterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Newsletter
+        fields = ['id', 'email', 'subscribed_at']

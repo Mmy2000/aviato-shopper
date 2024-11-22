@@ -6,7 +6,7 @@ from rest_framework import status
 
 from django.conf import settings
 from .models import ContactUs
-from .serializers import ContactUsSerializer
+from .serializers import ContactUsSerializer, NewsletterSerializer
 from django.core.mail import send_mail
 
 class ContactUsView(APIView):
@@ -56,4 +56,13 @@ class ContactUsView(APIView):
                 )
 
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NewsletterView(APIView):
+    def post(self, request):
+        serializer = NewsletterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Subscription successful!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
