@@ -1,11 +1,14 @@
 from decimal import Decimal
+from email.message import EmailMessage
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from store.models import Product
 from .models import Order,OrderProduct,Payment
 from cart.models import CartItem , Tax
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, PaypalPaymentSerializer
 from django.conf import settings
 from datetime import datetime
 from rest_framework.permissions import IsAuthenticated
@@ -13,10 +16,18 @@ from .serializers import OrderSerializer, PaymentSerializer
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import logging
+import paypalrestsdk
+from rest_framework import status as http_status
+
 
 # Initialize a logger
 logger = logging.getLogger(__name__)
 
+paypalrestsdk.configure({
+    "mode": settings.PAYPAL_MODE,  # sandbox or live
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_CLIENT_SECRET,
+})
 
 class PlaceOrderView(APIView):
     permission_classes = [IsAuthenticated]
@@ -165,3 +176,80 @@ class CashOrderView(APIView):
             # General error handling
             logger.error("An unexpected error occurred: %s", e)
             return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class PaypalPaymentAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PaypalPaymentSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            print(data['orderID'])
+            order = Order.objects.get(user=request.user, is_orderd=False, id=data['orderID'])
+            print(order.id)
+
+            try:
+                order = Order.objects.get(user=request.user, is_orderd=False, id=data['orderID'])
+
+                # Create a Payment object
+                payment = Payment.objects.create(
+                    user=request.user,
+                    payment_id=data['transID'],
+                    payment_method=data['payment_method'],
+                    payment_paid=order.order_total,
+                    status=data['status'],
+                )
+
+                # Update the order
+                order.payment = payment
+                order.is_orderd = True
+                order.status = 'Completed'
+                order.save()
+
+                # Process cart items
+                cart_items = CartItem.objects.filter(user=request.user)
+                for item in cart_items:
+                    order_product = OrderProduct.objects.create(
+                        order=order,
+                        payment=payment,
+                        user=request.user,
+                        product=item.product,
+                        quantity=item.quantity,
+                        product_price=item.product.price,
+                        ordered=True,
+                    )
+
+                    # Add variations
+                    product_variations = item.variations.all()
+                    order_product.variations.set(product_variations)
+                    order_product.save()
+
+                    # Reduce product stock
+                    product = Product.objects.get(id=item.product.id)
+                    product.stock -= item.quantity
+                    product.save()
+
+                # Clear cart
+                CartItem.objects.filter(user=request.user).delete()
+
+                # Send email
+                # mail_subject = 'Thank you for your order!'
+                # message = render_to_string('order_recieved_email.html', {
+                #     'user': request.user,
+                #     'order': order,
+                # })
+                # to_email = request.user.email
+                # email = EmailMessage(mail_subject, message, to=[to_email])
+                # email.send()
+
+                return Response({
+                    'order_number': order.order_number,
+                    'transID': payment.payment_id,
+                }, status=http_status.HTTP_200_OK)
+
+            except Order.DoesNotExist:
+                return Response({'error': 'Order not found.'}, status=http_status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({'error': str(e)}, status=http_status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=http_status.HTTP_400_BAD_REQUEST)
