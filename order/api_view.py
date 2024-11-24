@@ -5,10 +5,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from order.paypal import get_paypal_access_token
 from store.models import Product
 from .models import Order,OrderProduct,Payment
 from cart.models import CartItem , Tax
-from .serializers import OrderSerializer, PaypalPaymentSerializer
+from .serializers import OrderSerializer
 from django.conf import settings
 from datetime import datetime
 from rest_framework.permissions import IsAuthenticated
@@ -18,16 +19,11 @@ from django.template.loader import render_to_string
 import logging
 import paypalrestsdk
 from rest_framework import status as http_status
-
+import requests
 
 # Initialize a logger
 logger = logging.getLogger(__name__)
 
-paypalrestsdk.configure({
-    "mode": settings.PAYPAL_MODE,  # sandbox or live
-    "client_id": settings.PAYPAL_CLIENT_ID,
-    "client_secret": settings.PAYPAL_CLIENT_SECRET,
-})
 
 class PlaceOrderView(APIView):
     permission_classes = [IsAuthenticated]
@@ -177,79 +173,227 @@ class CashOrderView(APIView):
             logger.error("An unexpected error occurred: %s", e)
             return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-class PaypalPaymentAPIView(APIView):
+
+# class CreatePayPalPaymentView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request):
+#         try:
+#             current_user = request.user
+
+#             # Get cart items for the user
+#             cart_items = CartItem.objects.filter(user=current_user)
+#             if not cart_items.exists():
+#                 return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
+
+#             # Calculate totals dynamically
+#             total = sum(item.product.price * item.quantity for item in cart_items)
+#             tax_obj = Tax.objects.last()
+#             tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')
+#             tax_amount = (tax_percentage * total) / Decimal('100')
+#             grand_total = round(total + tax_amount, 2)
+
+#             # Generate PayPal access token
+#             access_token = get_paypal_access_token()
+
+#             # Define PayPal API URL and headers
+#             url = f"{settings.PAYPAL_API_BASE_URL}/v1/payments/payment"
+#             headers = {
+#                 "Content-Type": "application/json",
+#                 "Authorization": f"Bearer {access_token}",
+#             }
+
+#             # Define the payment details dynamically
+#             data = {
+#                 "intent": "sale",
+#                 "payer": {
+#                     "payment_method": "paypal"
+#                 },
+#                 "transactions": [{
+#                     "amount": {
+#                         "total": str(grand_total),  # Use calculated grand total
+#                         "currency": "USD"
+#                     },
+#                     "description": "Purchase from My Store"
+#                 }],
+#                 "redirect_urls": {
+#                     "return_url": "http://localhost:8000/order/execute-payment/",
+#                     "cancel_url": "http://localhost:8000/cancel-payment/"
+#                 }
+#             }
+
+#             # Make the request to PayPal
+#             response = requests.post(url, json=data, headers=headers)
+#             response.raise_for_status()
+
+#             # Return PayPal response
+#             return Response(response.json(), status=200)
+
+#         except requests.exceptions.RequestException as e:
+#             return Response({"error": str(e)}, status=400)
+
+class CreatePayPalPaymentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = PaypalPaymentSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-            print(data['orderID'])
-            order = Order.objects.get(user=request.user, is_orderd=False, id=data['orderID'])
-            print(order.id)
+        try:
+            current_user = request.user
+            return_url = request.data.get("return_url")
+            cancel_url = request.data.get("cancel_url")
 
+            if not return_url or not cancel_url:
+                return Response({"error": "Missing return_url or cancel_url"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get cart items for the user
+            cart_items = CartItem.objects.filter(user=current_user)
+            if not cart_items.exists():
+                return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Calculate totals dynamically
+            total = sum(item.product.price * item.quantity for item in cart_items)
+            tax_obj = Tax.objects.last()
+            tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')
+            tax_amount = (tax_percentage * total) / Decimal('100')
+            grand_total = round(total + tax_amount, 2)
+
+            # Generate PayPal access token
+            access_token = get_paypal_access_token()
+
+            # Define PayPal API URL and headers
+            url = f"{settings.PAYPAL_API_BASE_URL}/v1/payments/payment"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {access_token}",
+            }
+
+            # Define the payment details dynamically
+            data = {
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "transactions": [{
+                    "amount": {
+                        "total": str(grand_total),
+                        "currency": "USD"
+                    },
+                    "description": "Purchase from My Store"
+                }],
+                "redirect_urls": {
+                    "return_url": return_url,
+                    "cancel_url": cancel_url
+                }
+            }
+
+            # Make the request to PayPal
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()
+
+            # Return PayPal response
+            return Response(response.json(), status=200)
+
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=400)
+
+
+class ExecutePayPalPaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            current_user = request.user
+            access_token = get_paypal_access_token()
+            payment_id = request.data.get("payment_id")
+            payer_id = request.data.get("payer_id")
+
+            if not payment_id or not payer_id:
+                return Response({"error": "Missing payment_id or payer_id"}, status=400)
+
+            url = f"{settings.PAYPAL_API_BASE_URL}/v1/payments/payment/{payment_id}/execute"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {access_token}",
+            }
+            data = {"payer_id": payer_id}
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()
+
+            # Handle order completion logic (e.g., save payment, mark order as paid)
+            # Get the latest order that hasn't been ordered yet
+            order = Order.objects.filter(user=current_user, is_orderd=False).last()
+            if not order:
+                return Response({"error": "No order found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Create a payment object
             try:
-                order = Order.objects.get(user=request.user, is_orderd=False, id=data['orderID'])
-
-                # Create a Payment object
-                payment = Payment.objects.create(
-                    user=request.user,
-                    payment_id=data['transID'],
-                    payment_method=data['payment_method'],
-                    payment_paid=order.order_total,
-                    status=data['status'],
+                payment = Payment(
+                    user=current_user,
+                    payment_id=payment_id,
+                    payment_method="PayPal",
+                    payment_paid=True,  # PayPal payments are considered paid
+                    status="Completed"
                 )
+                payment.save()
+            except Exception as e:
+                logger.error("Failed to create payment: %s", e)
+                return Response({"error": "Failed to create payment."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                # Update the order
+            # Update the order with the payment information
+            try:
                 order.payment = payment
                 order.is_orderd = True
-                order.status = 'Completed'
+                order.status = "Completed"
                 order.save()
+            except Exception as e:
+                logger.error("Failed to update order with payment information: %s", e)
+                return Response({"error": "Failed to update order."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                # Process cart items
-                cart_items = CartItem.objects.filter(user=request.user)
+            # Move all cart items to OrderProduct table and reduce stock
+            try:
+                cart_items = CartItem.objects.filter(user=current_user)
+                if not cart_items.exists():
+                    logger.warning("No cart items found for user %s", current_user)
+
                 for item in cart_items:
-                    order_product = OrderProduct.objects.create(
+                    order_product = OrderProduct(
                         order=order,
                         payment=payment,
-                        user=request.user,
+                        user=current_user,
                         product=item.product,
                         quantity=item.quantity,
                         product_price=item.product.price,
-                        ordered=True,
+                        ordered=True
                     )
-
-                    # Add variations
-                    product_variations = item.variations.all()
-                    order_product.variations.set(product_variations)
+                    order_product.save()
+                    order_product.variations.set(item.variations.all())
                     order_product.save()
 
-                    # Reduce product stock
-                    product = Product.objects.get(id=item.product.id)
-                    product.stock -= item.quantity
-                    product.save()
+                    # Reduce the stock of the product
+                    product = item.product
+                    if product.stock >= item.quantity:
+                        product.stock -= item.quantity
+                        product.save()
+                    else:
+                        logger.error("Insufficient stock for product %s", product)
+                        return Response({"error": "Insufficient stock."}, status=status.HTTP_400_BAD_REQUEST)
 
-                # Clear cart
-                CartItem.objects.filter(user=request.user).delete()
-
-                # Send email
-                # mail_subject = 'Thank you for your order!'
-                # message = render_to_string('order_recieved_email.html', {
-                #     'user': request.user,
-                #     'order': order,
-                # })
-                # to_email = request.user.email
-                # email = EmailMessage(mail_subject, message, to=[to_email])
-                # email.send()
-
-                return Response({
-                    'order_number': order.order_number,
-                    'transID': payment.payment_id,
-                }, status=http_status.HTTP_200_OK)
-
-            except Order.DoesNotExist:
-                return Response({'error': 'Order not found.'}, status=http_status.HTTP_404_NOT_FOUND)
+                # Clear the user's cart after the order is placed
+                cart_items.delete()
             except Exception as e:
-                return Response({'error': str(e)}, status=http_status.HTTP_400_BAD_REQUEST)
-        
-        return Response(serializer.errors, status=http_status.HTTP_400_BAD_REQUEST)
+                logger.error("Failed to process cart items and update stock: %s", e)
+                return Response({"error": "Failed to process cart items."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Serialize the order and payment data
+            from .serializers import OrderSerializer, PaymentSerializer
+
+            return Response(
+                {
+                    "message": "Thank you! Your order has been successfully placed.",
+                    "order": OrderSerializer(order).data,
+                    "payment": PaymentSerializer(payment).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=400)

@@ -13,8 +13,3 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = '__all__'
 
-class PaypalPaymentSerializer(serializers.Serializer):
-    orderID = serializers.CharField(max_length=100)
-    transID = serializers.CharField(max_length=100)
-    payment_method = serializers.CharField(max_length=100)
-    status = serializers.CharField(max_length=100)

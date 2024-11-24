@@ -208,4 +208,4 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51PUdlERsJTyMnV5oOYGc55Lp69lWQn6F9k0xqQsmwkE20
 
 PAYPAL_CLIENT_ID = 'AZzTZ5ayM3ZCeBjituL73sqPON6N2Oaw4TdXcVHUsw4_B0PCXPbMINnFRvYG3LC6jDp0ZVpECecg5hus'
 PAYPAL_CLIENT_SECRET = 'EDmnJUlJ4PjuzMbvUAUGt1Qs5gKtBtmilGvGIdvTdI2-t_JUDsbJ67xQFEOiA1U2Riskq34QarzLj_ea'
-PAYPAL_MODE = 'sandbox'  # Use 'live' for production
+PAYPAL_API_BASE_URL = 'https://api.sandbox.paypal.com' 
