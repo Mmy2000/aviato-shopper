@@ -174,63 +174,6 @@ class CashOrderView(APIView):
             return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-# class CreatePayPalPaymentView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         try:
-#             current_user = request.user
-
-#             # Get cart items for the user
-#             cart_items = CartItem.objects.filter(user=current_user)
-#             if not cart_items.exists():
-#                 return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
-
-#             # Calculate totals dynamically
-#             total = sum(item.product.price * item.quantity for item in cart_items)
-#             tax_obj = Tax.objects.last()
-#             tax_percentage = tax_obj.tax if tax_obj else Decimal('0.00')
-#             tax_amount = (tax_percentage * total) / Decimal('100')
-#             grand_total = round(total + tax_amount, 2)
-
-#             # Generate PayPal access token
-#             access_token = get_paypal_access_token()
-
-#             # Define PayPal API URL and headers
-#             url = f"{settings.PAYPAL_API_BASE_URL}/v1/payments/payment"
-#             headers = {
-#                 "Content-Type": "application/json",
-#                 "Authorization": f"Bearer {access_token}",
-#             }
-
-#             # Define the payment details dynamically
-#             data = {
-#                 "intent": "sale",
-#                 "payer": {
-#                     "payment_method": "paypal"
-#                 },
-#                 "transactions": [{
-#                     "amount": {
-#                         "total": str(grand_total),  # Use calculated grand total
-#                         "currency": "USD"
-#                     },
-#                     "description": "Purchase from My Store"
-#                 }],
-#                 "redirect_urls": {
-#                     "return_url": "http://localhost:8000/order/execute-payment/",
-#                     "cancel_url": "http://localhost:8000/cancel-payment/"
-#                 }
-#             }
-
-#             # Make the request to PayPal
-#             response = requests.post(url, json=data, headers=headers)
-#             response.raise_for_status()
-
-#             # Return PayPal response
-#             return Response(response.json(), status=200)
-
-#         except requests.exceptions.RequestException as e:
-#             return Response({"error": str(e)}, status=400)
 
 class CreatePayPalPaymentView(APIView):
     permission_classes = [IsAuthenticated]
@@ -383,6 +326,19 @@ class ExecutePayPalPaymentView(APIView):
                 logger.error("Failed to process cart items and update stock: %s", e)
                 return Response({"error": "Failed to process cart items."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+            # Optional: Send order received email to customer
+            try:
+                mail_subject = 'Thank you for your order!'
+                message = render_to_string('order_recieved_email.html', {
+                    'user': request.user,
+                    'order': order,
+                })
+                email_from = settings.EMAIL_HOST_USER
+                send_mail(mail_subject, message, email_from, [request.user.email])
+            except Exception as e:
+                logger.error("Failed to send email: %s", e)
+                return Response({"error": f"Failed to send email: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
             # Serialize the order and payment data
             from .serializers import OrderSerializer, PaymentSerializer
 
