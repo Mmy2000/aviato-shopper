@@ -9,4 +9,5 @@ urlpatterns = [
     # API
     path('contact/', ContactUsView.as_view(), name='contact_us'),
     path('newsletter/', NewsletterView.as_view(), name='newsletter'),
+    path('last-six-products/', views.LastSixProductsView.as_view(), name='last_six_products'),
 ]
