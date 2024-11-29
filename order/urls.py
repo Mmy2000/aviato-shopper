@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .api_view import  CreatePayPalPaymentView, ExecutePayPalPaymentView, PlaceOrderView,CashOrderView
+from .api_view import  CreatePayPalPaymentView, ExecutePayPalPaymentView, PlaceOrderView,CashOrderView,StripePaymentView,ConfirmStripePaymentView
 urlpatterns = [
     path('place_order/' , views.place_order , name='place_order' ),
     path('cash-order/', views.cash_order, name='cash_order'),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('cash-order_api/', CashOrderView.as_view(), name='cash_order_api'),
     path('create-paypal-payment/', CreatePayPalPaymentView.as_view(), name='create-paypal-payment'),
     path('execute-paypal-payment/', ExecutePayPalPaymentView.as_view(), name='execute-paypal-payment'),
-
+    path('create-stripe-payment/', StripePaymentView.as_view(), name='create-stripe-payment'),
+    path('execute-stripe-payment/', ConfirmStripePaymentView.as_view(), name='execute-stripe-payment'),
 ]
