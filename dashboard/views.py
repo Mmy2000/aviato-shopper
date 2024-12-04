@@ -22,6 +22,7 @@ class RecentOrdersView(APIView):
         return Response(serializer.data)
 
 class DashboardDataView(APIView):
+    permission_classes = [IsAuthenticated,IsAdminUser]
     """
     API endpoint for retrieving dashboard data, including key metrics and recent activity.
     """
