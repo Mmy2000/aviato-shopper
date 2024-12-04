@@ -86,6 +86,9 @@ class Profile(models.Model):
     headline = models.CharField(max_length=50 , blank=True, null=True)
     city = models.CharField(max_length=50 ,blank=True, null=True)
     otp = models.IntegerField(null=True, blank=True)  # Store OTP here
+    created_at = models.DateTimeField("created_at", default=timezone.now)
+    updated_at = models.DateTimeField( auto_now=True)
+
 
     @property
     def full_name(self):

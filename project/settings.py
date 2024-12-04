@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'store',
     'cart',
     'order',
+    'dashboard',
 
     'rest_framework',
     'corsheaders',
