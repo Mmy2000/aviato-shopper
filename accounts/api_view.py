@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.utils.dateparse import parse_date
 from order.models import Order
 from store.models import Product
 from store.serializers import ProductSerializer
@@ -137,8 +137,33 @@ class UserOrdersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        # Get query parameters for filtering
+        status_filter = request.GET.get('status', None)
+        payment_method_filter = request.GET.get('payment_method', None)
+        created_at_filter = request.GET.get('created_at', None)
+
+        # Start with all orders for the authenticated user
         user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
-        serializer = OrderSerializer(user_orders,context={'request':request}, many=True)
+
+        # Apply filters dynamically
+        if status_filter:
+            user_orders = user_orders.filter(status=status_filter)
+        if payment_method_filter:
+            user_orders = user_orders.filter(payment__payment_method=payment_method_filter)
+        if created_at_filter:
+            # Parse date input safely
+            try:
+                date = parse_date(created_at_filter)
+                if date:
+                    user_orders = user_orders.filter(created_at__date=date)
+            except ValueError:
+                return Response(
+                    {"error": "Invalid date format. Use YYYY-MM-DD."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # Serialize and return the filtered data
+        serializer = OrderSerializer(user_orders, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class OrderDetailView(APIView):
