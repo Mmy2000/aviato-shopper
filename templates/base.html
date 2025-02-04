@@ -146,7 +146,7 @@
 								</a>
 							<ul class="dropdown-menu shadow-lg">
 								{% if user.is_authenticated %}
-								<li><a href="{% url 'dashboard'%}"><i class="fa-solid fa-chart-line me-2"></i>Dashboard</a></li>
+								<li><a href="{% url 'userdashboard'%}"><i class="fa-solid fa-chart-line me-2"></i>Dashboard</a></li>
 								<li><a href="{% url 'profile'%}"><i class="fa-solid fa-address-card me-2"></i>Profile</a></li>
 								<li><a href="{% url 'favorite'%}"><i class="fa-solid fa-star me-2"></i>My Favorite</a></li>
 								<li><a href="{% url 'logout' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
@@ -285,16 +285,16 @@
 					</ul>
 					<ul class="footer-menu text-uppercase">
 						<li>
-							<a href="contact.html">CONTACT</a>
+							<a href="">CONTACT</a>
 						</li>
 						<li>
-							<a href="shop.html">SHOP</a>
+							<a href="{% url 'product_list' %}">SHOP</a>
 						</li>
 						<li>
-							<a href="pricing.html">Pricing</a>
+							<a href="">Pricing</a>
 						</li>
 						<li>
-							<a href="contact.html">PRIVACY POLICY</a>
+							<a href="">PRIVACY POLICY</a>
 						</li>
 					</ul>
 					<p class="copyright-text">Copyright &copy;2021, Designed &amp; Developed by <a
