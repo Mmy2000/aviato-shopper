@@ -1,5 +1,4 @@
 from decimal import Decimal
-from email.message import EmailMessage
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
 from rest_framework.response import Response
@@ -20,7 +19,7 @@ import logging
 import paypalrestsdk
 from rest_framework import status as http_status
 import requests
-import stripe
+from datetime import timedelta
 
 # Initialize a logger
 logger = logging.getLogger(__name__)
@@ -287,6 +286,7 @@ class ExecutePayPalPaymentView(APIView):
                 order.payment = payment
                 order.is_orderd = True
                 order.status = "Completed"
+                order.delivered_date = order.updated_at + timedelta(days=4)
                 order.save()
             except Exception as e:
                 logger.error("Failed to update order with payment information: %s", e)

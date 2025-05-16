@@ -14,6 +14,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import stripe
 from django.conf import settings
+from datetime import timedelta
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -133,6 +134,7 @@ def stripe_payment(request):
         order.payment = payment
         order.status = 'Completed'
         order.is_orderd = True
+        order.delivered_date = order.updated_at + timedelta(days=4)
         order.save()
 
         # Move the cart items to Order Product table
@@ -200,6 +202,7 @@ def paypal_payment(request):
     order.payment = payment
     order.is_orderd = True
     order.status = 'Completed'
+    order.delivered_date = order.updated_at + timedelta(days=4)
     order.save()
 
     cart_items = CartItem.objects.filter(user=request.user)
@@ -272,6 +275,7 @@ def cash_order(request):
     order.payment = payment
     order.is_orderd = True
     order.status = "On Delivery"
+    order.delivered_date = order.updated_at + timedelta(days=4)
     order.save()
 
     # Move all cart items to OrderProduct table and reduce stock
