@@ -48,6 +48,7 @@ class Order(models.Model):
     ip = models.CharField(_("ip"),max_length=50  ,blank=True)
     is_orderd = models.BooleanField(_("is_orderd"),default=False)
     delivered_date = models.DateTimeField(blank=True,null=True)
+    cancellation_date = models.DateTimeField(null=True,blank=True)
     created_at = models.DateTimeField(_("created_at"), default=timezone.now)
     updated_at = models.DateTimeField(_("updated_at"),default=timezone.now)
 

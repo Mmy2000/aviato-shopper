@@ -201,3 +201,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         # Clear OTP after successful reset
         user.profile.otp = None
         user.profile.save()
+
+class CancelOrderSerializer(serializers.Serializer):
+    order_number = serializers.CharField()
