@@ -82,3 +82,25 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.name
+    
+class RefundPayment(models.Model):
+    STATUS_CHOICES = (
+        ("pending", "pending"),
+        ("completed", "completed"),
+        ("failed", "failed"),
+    )
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="refunds")
+    payment_id = models.CharField(max_length=100)
+    sale_id = models.CharField(max_length=100)
+    refund_id = models.CharField(max_length=100)
+    refund_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    refund_from_transaction_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10)
+    status = models.CharField(choices=STATUS_CHOICES, default="pending", max_length=15)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    response_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Refund for {self.reservation} - {self.status}"
