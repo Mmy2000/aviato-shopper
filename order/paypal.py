@@ -34,7 +34,7 @@ def refund_payment(order):
                 "currency": "USD",
             }
             refund = sale.refund(refund_data)
-            order = Order.objects.filter(payment__payment_id=order.payment.payment_id)
+            print(f"Payment ID: {order.payment.payment_id}")
             if not order:
                 return {"status": "error", "message": "order not found."}
             if refund.success():

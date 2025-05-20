@@ -27,5 +27,5 @@ urlpatterns = [
     path('api/favorites/', api_view.FavoriteProductsView.as_view(), name='favorite-products'),
     path('api/orders/', api_view.UserOrdersView.as_view(), name='user-orders'),
     path('api/orders/<int:order_id>/', api_view.OrderDetailView.as_view(), name='order-detail'),
-    path('api/profile/cencel/', api_view.CancelOrder.as_view(), name='cancel-order'),
+    path('api/profile/cencel/<str:order_number>/', api_view.CancelOrder.as_view(), name='cancel-order'),
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Payment, Order, OrderProduct
+from .models import Payment, Order, OrderProduct,RefundPayment
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('payment_id', 'payment_method', 'payment_paid', 'status', 'created_at', 'user')
@@ -54,3 +54,4 @@ class OrderProductAdmin(admin.ModelAdmin):
 admin.site.register(OrderProduct, OrderProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(RefundPayment)

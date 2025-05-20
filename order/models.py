@@ -2,6 +2,7 @@ from django.db import models
 from accounts.models import User
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from datetime import timedelta
 # Create your models here.
 
 class Payment(models.Model):
@@ -48,7 +49,6 @@ class Order(models.Model):
     ip = models.CharField(_("ip"),max_length=50  ,blank=True)
     is_orderd = models.BooleanField(_("is_orderd"),default=False)
     delivered_date = models.DateTimeField(blank=True,null=True)
-    cancellation_date = models.DateTimeField(null=True,blank=True)
     created_at = models.DateTimeField(_("created_at"), default=timezone.now)
     updated_at = models.DateTimeField(_("updated_at"),default=timezone.now)
 
@@ -56,6 +56,15 @@ class Order(models.Model):
         return f'{self.first_name} {self.last_name}'
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
+    
+    @property
+    def is_cancellable(self):
+        if self.delivered_date and self.status != 'Cancelled':
+            now = timezone.now()
+            one_day_before_delivery = self.delivered_date - timedelta(days=1)
+            # Not cancellable if current time is after one day before the delivery date
+            return now < one_day_before_delivery
+        return False  # If there's no delivered_date, assume it's still cancellable
     
     class Meta:
         verbose_name = _("Orders")
@@ -103,4 +112,4 @@ class RefundPayment(models.Model):
     response_message = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Refund for {self.reservation} - {self.status}"
+        return f"Refund for {self.order} - {self.status}"

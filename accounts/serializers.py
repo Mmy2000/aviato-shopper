@@ -127,7 +127,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'order_number', 'status', 'order_total', 'tax', 'created_at',
             'updated_at', 'is_orderd', 'full_name', 'full_address', 'order_products',
-            'payment_details'
+            'payment_details','delivered_date','is_cancellable'
         ]
 
     def get_order_products(self, obj):

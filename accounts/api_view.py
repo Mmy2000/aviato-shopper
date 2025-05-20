@@ -182,42 +182,38 @@ class OrderDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         
+# views.py
 class CancelOrder(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        serializer = CancelOrderSerializer(data=request.data)
-        if serializer.is_valid():
-            order_number = serializer.validated_data['order_number']
+    def post(self, request, order_number, *args, **kwargs):
+        try:
+            order = Order.objects.get(order_number=order_number, user=request.user)
 
-            try:
-                order = Order.objects.get(order_number=order_number, user=request.user)
+            if not order.is_cancellable:
+                return Response({"detail": "Order cannot be cancelled after delivery or close to it."}, status=status.HTTP_400_BAD_REQUEST)
 
-                if order.status == 'Cancelled':
-                    return Response({"detail": "Order already cancelled."}, status=status.HTTP_400_BAD_REQUEST)
+            if order.status == 'Cancelled':
+                return Response({"detail": "Order already cancelled."}, status=status.HTTP_400_BAD_REQUEST)
 
-                if order.payment_method.lower() == 'cash':
-                    # Cancel directly
+            if order.payment_method.lower() == 'cash':
+                order.status = 'Cancelled'
+                order.cancellation_date = timezone.now()
+                order.save()
+                return Response({"detail": "Cash order cancelled successfully."}, status=status.HTTP_200_OK)
+
+            elif order.payment_method.lower() in ['paypal', 'stripe']:
+                success, message = refund_payment(order)
+                if success:
                     order.status = 'Cancelled'
                     order.cancellation_date = timezone.now()
                     order.save()
-                    return Response({"detail": "Cash order cancelled successfully."}, status=status.HTTP_200_OK)
-
-                elif order.payment_method.lower() in ['paypal', 'stripe']:
-                    # Handle refund process
-                    success, message = refund_payment(order)
-                    if success:
-                        order.status = 'Cancelled'
-                        order.cancellation_date = timezone.now()
-                        order.save()
-                        return Response({"detail": "Order cancelled and refunded successfully."}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({"detail": f"Refund failed: {message}"}, status=status.HTTP_400_BAD_REQUEST)
-
+                    return Response({"detail": "Order cancelled and refunded successfully."}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"detail": "Unknown payment method."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"detail": f"Refund failed: {message}"}, status=status.HTTP_400_BAD_REQUEST)
 
-            except Order.DoesNotExist:
-                return Response({"detail": "Order not found."}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Unknown payment method."}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Order.DoesNotExist:
+            return Response({"detail": "Order not found."}, status=status.HTTP_404_NOT_FOUND)
+
